@@ -38,7 +38,7 @@ def init_board():
         else:
             board.append(odd[:])
 
-return board
+    return board
 
 
 def init_score():
