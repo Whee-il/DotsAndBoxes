@@ -124,16 +124,48 @@ class GameBoard:
 
         return ''.join(buffer)
 
+    def ultimateCheck(self, move):
+        # store input as mmove
+        # evaluate mmove:
+        # user input format (paranthesis and number)
+        # xdelta, ydelta (length)
+        # check if line is taken
+        # out of bounds
+
+        ((x1, y1), (x2, y2)) = move
+        if (self._isGoodCoord(move[0]) and self._isGoodCoord(move[1])) {
+
+        }
+
+
+
     def _makeMove(self, coord1, coord2):
         """Return a new "move", and ensure it's in canonical form.
         (That is, force it so that it's an ordered tuple of tuples.)
         """
         xdelta, ydelta = coord2[0] - coord1[0], coord2[1] - coord1[1]
 
-        while((abs(xdelta) != 1 and abs(ydelta) == 0) or
-                (abs(xdelta) == 0 and abs(ydelta) != 1)):
-                print ("Bad coordinates, not adjacent points.")
+        while((abs(xdelta) > 1 and abs(ydelta) == 0) or (abs(xdelta) == 0 and abs(ydelta) > 1)):
+            print ("XDELTA IS"), xdelta
+            print ("YDELTA IS"), ydelta
+            print ("Bad coordinates, not adjacent points.")
+            move = input("Try again. Move?")
 
+            assert (self._isGoodCoord(move[0]) and
+                    self._isGoodCoord(move[1])), \
+                "Bad coordinates, out of bounds of the board."
+            move = self._makeMove(move[0], move[1])
+            assert (not self.board.has_key(move)), \
+                "Bad move, line already occupied."
+            self.board[move] = self.player
+            ## Check if a square is completed.
+            square_corners = self._isSquareMove(move)
+            if square_corners:
+                for corner in square_corners:
+                    self.squares[corner] = self.player
+            else:
+                self._switchPlayer()
+            return square_corners
 
         if coord1 < coord2:
             return (coord1, coord2)
@@ -197,4 +229,4 @@ if __name__ == "__main__":
     elif len(sys.argv[1:]) == 1:
         _test(int(sys.argv[1]), int(sys.argv[1]))
     else:
-        _test(5, 5)
+        _test(4, 4)
