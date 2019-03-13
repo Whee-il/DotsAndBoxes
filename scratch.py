@@ -161,9 +161,6 @@ class GameBoard:
 
         return moves
 
-
-
-
 def _test(width, height):
     """A small driver to make sure that the board works.  It's not
     safe to use this test function in production, because it uses
