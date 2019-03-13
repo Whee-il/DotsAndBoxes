@@ -150,6 +150,19 @@ class GameBoard:
                 and isinstance(coord[0], types.IntType)
                 and isinstance(coord[1], types.IntType))
 
+    def GetMoves(self):
+        moves = []
+        for h1 in range(self.height):
+            for w1 in range(self.width):
+                for h2 in range(self.height):
+                    for w2 in range(self.width):
+                        if (ultimateCheck((w1,h2),(w2,h2))):
+                            moves.append(edmondsCode((w1,h1),(w2,h2)))
+
+        return moves
+
+
+
 
 def _test(width, height):
     """A small driver to make sure that the board works.  It's not

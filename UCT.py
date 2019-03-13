@@ -54,6 +54,25 @@ class GameState:
         """
         pass
 
+class DotsAndBoxes:
+    def __init__(self):
+        self.playerJustMoved = 2
+
+    def Clone(self,board):
+        """"Dont be mad at me"""
+
+    def DoMove(self, move):
+
+        self.playerJustMoved = 3 - self.playerJustMoved
+
+    def GetMoves(self):
+        """"Dont be mad at me"""
+
+
+    def GetResults(self):
+        """"Dont be mad at me"""
+
+
 
 class NimState:
     """ A state of the game Nim. In Nim, players alternately take 1,2 or 3 chips with the 
