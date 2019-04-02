@@ -139,16 +139,14 @@ class GameBoard:
         return ''.join(buffer)
 
     def ultimateCheck(self, move):
-        # store input as mmove
-        # evaluate mmove:
         # user input format (paranthesis and number)
         # xdelta, ydelta (length)
         # check if line is taken
-        # out of bounds
 
         #((x1, y1), (x2, y2)) = move
 
         #isGoodCord
+
         while (self._isGoodCoord(move[0]) == False or self._isGoodCoord(move[1]) == False):
             move = input("Invalid coordinates. Please reenter: ")
 
@@ -157,9 +155,8 @@ class GameBoard:
             #print ("YDELTA IS"), ydelta
             move = input("Invalid Coordinates, not adjacent point. Move?")
 
-
-        while (move[0] > self.width and move{1] > self.height):
-             print ("hi")
+        while move[0] > self.width and move[1] > self.height:
+            move = input("Invalid Coordinates, not inside boundaries. Move?")
 
 
 
