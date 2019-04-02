@@ -146,16 +146,18 @@ class GameBoard:
         #((x1, y1), (x2, y2)) = move
 
         #isGoodCord
-        while self._isGoodCoord(move[0]) == false or self._isGoodCoord(move[1]) == false:
+
+        while (self._isGoodCoord(move[0]) == False or self._isGoodCoord(move[1]) == False):
             move = input("Invalid coordinates. Please reenter: ")
 
-        while (abs(xdelta) > 1 and abs(ydelta) == 0) or (abs(xdelta) == 0 and abs(ydelta) > 1):
+        while ((abs(self.xdelta) > 1 and abs(self.ydelta) == 0) or (abs(self.xdelta) == 0 and abs(self.ydelta) > 1)):
             #print ("XDELTA IS"), xdelta
             #print ("YDELTA IS"), ydelta
             move = input("Invalid Coordinates, not adjacent point. Move?")
 
         while move[0] > self.width and move[1] > self.height:
             move = input("Invalid Coordinates, not inside boundaries. Move?")
+
 
 
         def _makeMove(self, coord1, coord2):
@@ -208,7 +210,7 @@ class GameBoard:
                 for h2 in range(self.height):
                     for w2 in range(self.width):
                         if (ultimateCheck((w1,h2),(w2,h2))):
-                            moves.append(edmondsCode((w1,h1),(w2,h2)))
+                            moves.append(rosettaStoneIndex((w1,h1),(w2,h2)))
 
         return moves
 
