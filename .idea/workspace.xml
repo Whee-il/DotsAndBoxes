@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="45f4cbf6-5344-4f61-bd23-9975b53a0922" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/DotsAndBoxes.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/DotsAndBoxes.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scratch.py" beforeDir="false" afterPath="$PROJECT_DIR$/scratch.py" afterDir="false" />
     </list>
@@ -33,12 +31,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="75" />
+          <entry key="py" value="95" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="75" />
+          <entry key="Python" value="95" />
         </counts>
       </usages-collector>
     </session>
@@ -53,8 +51,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/scratch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="568">
-              <caret line="146" column="24" selection-start-line="146" selection-start-column="24" selection-end-line="146" selection-end-column="24" />
+            <state relative-caret-position="101">
+              <caret line="117" column="31" selection-start-line="117" selection-start-column="31" selection-end-line="117" selection-end-column="31" />
+              <folding>
+                <marker date="1554237588000" expanded="true" signature="2899:2914" ph="..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -80,9 +81,9 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="15" />
-    <option name="y" value="23" />
-    <option name="width" value="1345" />
+    <option name="x" value="1423" />
+    <option name="y" value="26" />
+    <option name="width" value="974" />
     <option name="height" value="1290" />
   </component>
   <component name="ProjectView">
@@ -140,10 +141,10 @@
     <option name="totallyTimeSpent" value="2809000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="15" y="23" width="1345" height="1290" extended-state="0" />
+    <frame x="1423" y="26" width="974" height="1290" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.33610272" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.46694648" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -185,8 +186,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/scratch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="568">
-          <caret line="146" column="24" selection-start-line="146" selection-start-column="24" selection-end-line="146" selection-end-column="24" />
+        <state relative-caret-position="101">
+          <caret line="117" column="31" selection-start-line="117" selection-start-column="31" selection-end-line="117" selection-end-column="31" />
+          <folding>
+            <marker date="1554237588000" expanded="true" signature="2899:2914" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
