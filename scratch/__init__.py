@@ -157,7 +157,9 @@ class GameBoard:
             #print ("YDELTA IS"), ydelta
             move = input("Invalid Coordinates, not adjacent point. Move?")
 
-        while (move[0] < self.)
+
+        while (move[0] > self.width and move{1] > self.height):
+             print ("hi")
 
 
 
