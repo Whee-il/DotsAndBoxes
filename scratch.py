@@ -58,16 +58,16 @@ class GameBoard:
 
     def rosettaStoneIndex(self, move):
         num = 0
-        for(x1 in range(self.width)):
-            for(y1 in range(self.height)):
-                for(x2 in range(self.width)):
-                    for(y2 in range(self.height)):
-                        if(ultimateCheck(((x1,y1), (x2,y2)))):
+        for x1 in range(self.width):
+            for y1 in range(self.height):
+                for x2 in range(self.width):
+                    for y2 in range(self.height):
+                        if ultimateCheck(((x1,y1), (x2,y2))):
                             num = num + 1
-                        if (move == ((x1,y1), (x2,y2))):
+                        if move == ((x1,y1), (x2,y2)):
                             return num
 
-    def rosettaStoneCoord(self, move):
+    #def rosettaStoneCoord(self, move):
         
 
     def play(self, move):
@@ -157,7 +157,7 @@ class GameBoard:
             #print ("YDELTA IS"), ydelta
             move = input("Invalid Coordinates, not adjacent point. Move?")
 
-        while (move[0] > self.width and move{1] > self.height):
+        while (move[0] > self.width and move[1] > self.height):
              print ("hi")
 
 
