@@ -67,7 +67,16 @@ class GameBoard:
                         if move == ((x1,y1), (x2,y2)):
                             return num
 
-    #def rosettaStoneCoord(self, move):
+    def rosettaStoneCoord(self, move):
+        num = 0
+        for x1 in range(self.width):
+            for y1 in range(self.height):
+                for x2 in range(self.width):
+                    for y2 in range(self.height):
+                        if ultimateCheck(((x1, y1), (x2, y2))):
+                            num = num + 1
+                        if move == num:
+                            return ((x1, y1), (x2, y2))
         
 
     def play(self, move):
