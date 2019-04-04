@@ -20,6 +20,13 @@ class GameBoard:
         self.squares = {}
         self.player = 0
 
+    def Clone(self):
+        st = GameBoard()
+        st.playerJustMoved = 3 - self.player
+        st.board = self.board
+        st.squares = self.squares 
+        return st
+
     def isGameOver(self):
         """Returns true if no more moves can be made.
 
