@@ -1,11 +1,20 @@
 import types
-
+import sys
 
 class GameBoard:
-    def __init__(self, width=5, height=5):
+    def __init__(self, width=4, height=4):
+        """Take in input"""
+
+        if len(sys.argv[1:]) == 2:
+            _test(int(sys.argv[1]), int(sys.argv[2]))
+        elif len(sys.argv[1:]) == 1:
+            _test(int(sys.argv[1]), int(sys.argv[1]))
+        else:
+            _test(4, 4)
+
         """Initializes a rectangular gameboard."""
         self.width, self.height = width, height
-        assert 2 <= self.width and 2 <= self.height, \
+        assert 2 <= self.width and 2 <= self.height,
             "Game can't be played on this board's dimension."
         self.board = {}
         self.squares = {}
@@ -64,7 +73,7 @@ class GameBoard:
                     for y2 in range(self.height):
                         if ultimateCheck(((x1,y1), (x2,y2))):
                             num = num + 1
-                        if move == ((x1,y1), (x2,y2)):
+                        elif move == ((x1,y1), (x2,y2)):
                             return num
 
     def rosettaStoneCoord(self, move):
@@ -77,7 +86,7 @@ class GameBoard:
                             num = num + 1
                         if move == num:
                             return ((x1, y1), (x2, y2))
-        
+
 
     def play(self, move):
         """Place a particular move on the board.  If any wackiness
@@ -151,10 +160,6 @@ class GameBoard:
         # user input format (paranthesis and number)
         # xdelta, ydelta (length)
         # check if line is taken
-
-        #((x1, y1), (x2, y2)) = move
-
-        #isGoodCord
 
         while (self._isGoodCoord(move[0]) == False or self._isGoodCoord(move[1]) == False):
             move = input("Invalid coordinates. Please reenter: ")
