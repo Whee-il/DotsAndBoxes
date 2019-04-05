@@ -14,7 +14,7 @@ class GameBoard:
 
         """Initializes a rectangular gameboard."""
         self.width, self.height = width, height
-        assert 2 <= self.width and 2 <= self.height,
+        assert 2 <= self.width and 2 <= self.height,\
             "Game can't be played on this board's dimension."
         self.board = {}
         self.squares = {}
@@ -95,10 +95,11 @@ class GameBoard:
                             return ((x1, y1), (x2, y2))
 
 
-    def play(self, move):
+    def DoMove(self, moveI):
         """Place a particular move on the board.  If any wackiness
         occurs, raise an AssertionError.  Returns a list of
         bottom-left corners of squares captured after a move."""
+        move = rosettaStoneCoord(moveI)
         assert (self._isGoodCoord(move[0]) and
                 self._isGoodCoord(move[1])), \
             "Bad coordinates, out of bounds of the board."
