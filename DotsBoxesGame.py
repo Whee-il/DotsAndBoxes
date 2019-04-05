@@ -182,17 +182,17 @@ class GameBoard:
 
 
 
-        def _makeMove(self, coord1, coord2):
-            """Return a new "move", and ensure it's in canonical form.
-            (That is, force it so that it's an ordered tuple of tuples.)
-            """
-            xdelta, ydelta = coord2[0] - coord1[0], coord2[1] - coord1[1]
+    def makeMove(self, coord1, coord2):
+        """Return a new "move", and ensure it's in canonical form.
+        (That is, force it so that it's an ordered tuple of tuples.)
+        """
+        xdelta, ydelta = coord2[0] - coord1[0], coord2[1] - coord1[1]
 
-            while((abs(xdelta) > 1 and abs(ydelta) == 0) or (abs(xdelta) == 0 and abs(ydelta) > 1)):
-                print ("XDELTA IS"), xdelta
-                print ("YDELTA IS"), ydelta
-                print ("Bad coordinates, not adjacent points.")
-                move = input("Try again. Move?")
+        while((abs(xdelta) > 1 and abs(ydelta) == 0) or (abs(xdelta) == 0 and abs(ydelta) > 1)):
+            print ("XDELTA IS"), xdelta
+            print ("YDELTA IS"), ydelta
+            print ("Bad coordinates, not adjacent points.")
+            move = input("Try again. Move?")
 
             assert (self._isGoodCoord(move[0]) and
                     self._isGoodCoord(move[1])), \
