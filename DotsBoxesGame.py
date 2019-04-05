@@ -5,12 +5,13 @@ class GameBoard:
     def __init__(self, width=4, height=4):
         """Take in input"""
 
-        if len(sys.argv[1:]) == 2:
+        """if len(sys.argv[1:]) == 2:
             _test(int(sys.argv[1]), int(sys.argv[2]))
         elif len(sys.argv[1:]) == 1:
             _test(int(sys.argv[1]), int(sys.argv[1]))
         else:
-            _test(4, 4)
+            _test(4, 4)"""
+        #the code is currently always running the else statement
 
         """Initializes a rectangular gameboard."""
         self.width, self.height = width, height
@@ -20,11 +21,15 @@ class GameBoard:
         self.squares = {}
         self.player = 0
 
+        """Initializes score array"""
+        self.scores = [0,0]
+
     def Clone(self):
         st = GameBoard()
         st.playerJustMoved = 3 - self.player
         st.board = self.board
-        st.squares = self.squares 
+        st.squares = self.squares
+        st.scores = self.scores
         return st
 
     def isGameOver(self):
@@ -62,6 +67,7 @@ class GameBoard:
                         and b.has_key(mmove((x1 - j, y1 + 1), (x2, y2)))):
                     captured_squares.append(min([(x1, y1), (x1 - j, y1),
                                                  (x1 - j, y1 + 1), (x2, y2)]))
+        scores[self.player] += captured_squares.len()
         return captured_squares
 
     def _isHorizontal(self, move):
@@ -89,7 +95,7 @@ class GameBoard:
             for y1 in range(self.height):
                 for x2 in range(self.width):
                     for y2 in range(self.height):
-                        if ultimateCheck(((x1, y1), (x2, y2))):
+                        if self.ultimateCheck(((x1, y1), (x2, y2))):
                             num = num + 1
                         if move == num:
                             return ((x1, y1), (x2, y2))
@@ -99,7 +105,7 @@ class GameBoard:
         """Place a particular move on the board.  If any wackiness
         occurs, raise an AssertionError.  Returns a list of
         bottom-left corners of squares captured after a move."""
-        move = rosettaStoneCoord(moveI)
+        move = self.rosettaStoneCoord(moveI)
         assert (self._isGoodCoord(move[0]) and
                 self._isGoodCoord(move[1])), \
             "Bad coordinates, out of bounds of the board."
@@ -236,10 +242,14 @@ class GameBoard:
 
         return moves
 
+    """def GetResults(self):
+        if self.GetMoves() == []
+            if"""
+
 def _test(width, height):
     """A small driver to make sure that the board works.  It's not
     safe to use this test function in production, because it uses
-    input()."""
+    input(). This is where it initializes and updates the score array"""
     board = GameBoard(width, height)
     turn = 1
     scores = [0, 0]
@@ -248,7 +258,7 @@ def _test(width, height):
         print "Turn %d (Player %s)" % (turn, player)
         print board
         move = input("Move? ")
-        squares_completed = board.play(move)
+        squares_completed = board.DoMove(move)
         if squares_completed:
             print "Square completed."
             scores[player] += len(squares_completed)
