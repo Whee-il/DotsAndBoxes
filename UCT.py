@@ -159,7 +159,7 @@ class DotsAndBoxes:
 
 
     def DoMove(self, moveI):
-        self.playerJustMoved = 3 - self.playerJustMoved
+
         """Place a particular move on the board.  If any wackiness
         occurs, raise an AssertionError.  Returns a list of
         bottom-left corners of squares captured after a move."""
@@ -191,6 +191,7 @@ class DotsAndBoxes:
 
     def _switchPlayer(self):
         self.player = (self.player + 1) % 2
+        self.playerJustMoved = 3 - self.playerJustMoved
 
     def getPlayer(self):
         return self.player
@@ -644,17 +645,15 @@ def UCTPlayGame():
 
         if state.playerJustMoved == 1:
             #m = UCT(rootstate = state, itermax = 1000, verbose = False) # play with values for itermax and verbose = True
-            i = input("Enter the locatio of your move")
+            i = input("Player 1 Enter the location of your move")
             m = state.rosettaStoneIndex(i)
         else:
             #m = UCT(rootstate = state, itermax = 100, verbose = False)
-            i = input("Enter the location of your move")
-            print(i)
+            i = input("Player 2 Enter the location of your move")
             m = state.rosettaStoneIndex(i)
-            print(m)
 
 
-        print("Best Move: " + str(m) + "\n")
+        #print("Best Move: " + str(m) + "\n")
         state.DoMove(m)
     if state.GetResult(state.playerJustMoved) == 1.0:
         print("Player " + str(state.playerJustMoved) + " wins!")
