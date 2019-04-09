@@ -321,9 +321,28 @@ class DotsAndBoxes:
 
         return moves
 
-    """def GetResults(self):
-        if self.GetMoves() == []
-            if"""
+    #give it playerjustmoved. If playerjustmoved wins then return 1.0
+    def GetResults(self):
+        if self.GetMoves() == []:
+            if self.scores[st.playerJustMoved] > self.scores[3 - st.playerJustMoved]:
+                return 1.0
+            else:
+                return 0.0
+        else:
+            return 0.0
+
+"""def GetResult(self, playerjm):
+    Get the game result from the viewpoint of playerjm.
+    for (x, y, z) in [(0, 1, 2), (3, 4, 5), (6, 7, 8), (0, 3, 6), (1, 4, 7), (2, 5, 8), (0, 4, 8),
+                      (2, 4, 6)]:
+        if self.board[x] == self.board[y] == self.board[z]:
+            if self.board[x] == playerjm:
+                return 1.0
+            else:
+                return 0.0
+    if self.GetMoves() == []: return 0.5  # draw
+    assert False  # Should not be possible to get here"""
+
 
 class NimState:
     """ A state of the game Nim. In Nim, players alternately take 1,2 or 3 chips with the 
