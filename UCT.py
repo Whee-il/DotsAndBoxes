@@ -164,6 +164,8 @@ class DotsAndBoxes:
         occurs, raise an AssertionError.  Returns a list of
         bottom-left corners of squares captured after a move."""
         move = self.rosettaStoneCoord(moveI)
+        print(moveI)
+        print(move)
 
         assert (self._isGoodCoord(move[0]) and
                 self._isGoodCoord(move[1])), \
@@ -642,12 +644,15 @@ def UCTPlayGame():
 
         if state.playerJustMoved == 1:
             #m = UCT(rootstate = state, itermax = 1000, verbose = False) # play with values for itermax and verbose = True
-            m = input("Enter the locatio of your move")
-            m = state.rosettaStoneIndex(m)
+            i = input("Enter the locatio of your move")
+            m = state.rosettaStoneIndex(i)
         else:
             #m = UCT(rootstate = state, itermax = 100, verbose = False)
-            m = input("Enter the location of your move")
-            m = state.rosettaStoneIndex(m)
+            i = input("Enter the location of your move")
+            print(i)
+            m = state.rosettaStoneIndex(i)
+            print(m)
+
 
         print("Best Move: " + str(m) + "\n")
         state.DoMove(m)
