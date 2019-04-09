@@ -50,7 +50,7 @@ class GameBoard:
         (Note: I had forgotten about double crossed moves.  Gregor
         Lingl reported the bug; I'd better fix it now!  *grin*) """
         b = self.board
-        mmove = self._makeMove  ## just to make typing easier
+        mmove = self.makeMove  ## just to make typing easier
         ((x1, y1), (x2, y2)) = move
         captured_squares = []
         if self._isHorizontal(move):
@@ -67,7 +67,7 @@ class GameBoard:
                         and b.has_key(mmove((x1 - j, y1 + 1), (x2, y2)))):
                     captured_squares.append(min([(x1, y1), (x1 - j, y1),
                                                  (x1 - j, y1 + 1), (x2, y2)]))
-        scores[self.player] += captured_squares.len()
+        self.scores[self.player] += len(captured_squares)
         return captured_squares
 
     def _isHorizontal(self, move):
@@ -109,7 +109,7 @@ class GameBoard:
         assert (self._isGoodCoord(move[0]) and
                 self._isGoodCoord(move[1])), \
             "Bad coordinates, out of bounds of the board."
-        move = self._makeMove(move[0], move[1])
+        move = self.makeMove(move[0], move[1])
         assert (not self.board.has_key(move)), \
             "Bad move, line already occupied."
         self.board[move] = self.player
@@ -174,36 +174,49 @@ class GameBoard:
         # user input format (paranthesis and number)
         # xdelta, ydelta (length)
         # check if line is taken
+        self.xdelta, self.ydelta = move[1][0] - move[0][0], move[1][1] - move[0][1]
 
         while (self._isGoodCoord(move[0]) == False or self._isGoodCoord(move[1]) == False):
+            return False
+            """
             move = input("Invalid coordinates. Please reenter: ")
+            """
 
         while ((abs(self.xdelta) > 1 and abs(self.ydelta) == 0) or (abs(self.xdelta) == 0 and abs(self.ydelta) > 1)):
-            #print ("XDELTA IS"), xdelta
-            #print ("YDELTA IS"), ydelta
+            return False
+            """"
+            print ("XDELTA IS"), self.xdelta
+            print ("YDELTA IS"), self.ydelta
             move = input("Invalid Coordinates, not adjacent point. Move?")
+            self.xdelta, self.ydelta = move[1][0] - move[0][0], move[1][1] - move[0][1]
+            """
 
-        while move[0] > self.width and move[1] > self.height:
+        while move[0][0] > self.width and move[1][0] > self.width  and move[0][1] > self.height and move[1][1] > self.height:
+            return False
+            """
             move = input("Invalid Coordinates, not inside boundaries. Move?")
+            """
 
+        return True
 
 
     def makeMove(self, coord1, coord2):
         """Return a new "move", and ensure it's in canonical form.
         (That is, force it so that it's an ordered tuple of tuples.)
         """
-        xdelta, ydelta = coord2[0] - coord1[0], coord2[1] - coord1[1]
+        self.xdelta, self.ydelta = coord2[0] - coord1[0], coord2[1] - coord1[1]
 
-        while((abs(xdelta) > 1 and abs(ydelta) == 0) or (abs(xdelta) == 0 and abs(ydelta) > 1)):
-            print ("XDELTA IS"), xdelta
-            print ("YDELTA IS"), ydelta
+        while((abs(self.xdelta) > 1 and abs(self.ydelta) == 0) or (abs(self.xdelta) == 0 and abs(self.ydelta) > 1)):
+            print ("XDELTA IS"), self.xdelta
+            print ("YDELTA IS"), self.ydelta
             print ("Bad coordinates, not adjacent points.")
             move = input("Try again. Move?")
 
             assert (self._isGoodCoord(move[0]) and
                     self._isGoodCoord(move[1])), \
                 "Bad coordinates, out of bounds of the board."
-            move = self._makeMove(move[0], move[1])
+            move = self._makeMove(move[0]
+                                  , move[1])
             assert (not self.board.has_key(move)), \
                 "Bad move, line already occupied."
             self.board[move] = self.player
