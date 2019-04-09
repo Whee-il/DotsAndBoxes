@@ -143,7 +143,7 @@ class DotsAndBoxes:
                     for y2 in range(self.height):
                         if self.ultimateCheck(((x1,y1), (x2,y2))):
                             num = num + 1
-                        elif move == ((x1,y1), (x2,y2)):
+                        if move == ((x1,y1),(x2,y2)):
                             return num
 
     def rosettaStoneCoord(self, move):
