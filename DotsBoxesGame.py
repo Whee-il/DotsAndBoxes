@@ -20,6 +20,8 @@ class GameBoard:
         self.board = {}
         self.squares = {}
         self.player = 0
+        self.playerJustMoved = 2
+
 
         """Initializes score array"""
         self.scores = [0,0]
@@ -102,16 +104,23 @@ class GameBoard:
 
 
     def DoMove(self, moveI):
+        self.playerJustMoved = 3 - self.playerJustMoved
         """Place a particular move on the board.  If any wackiness
         occurs, raise an AssertionError.  Returns a list of
         bottom-left corners of squares captured after a move."""
         move = self.rosettaStoneCoord(moveI)
+
+
         assert (self._isGoodCoord(move[0]) and
                 self._isGoodCoord(move[1])), \
             "Bad coordinates, out of bounds of the board."
         move = self.makeMove(move[0], move[1])
-        assert (not self.board.has_key(move)), \
+        while ( self.board.has_key(move)):
+            move = input("Bad move, line already occupied.")
+            self.DoMove(move)
             "Bad move, line already occupied."
+        print(move)
+
         self.board[move] = self.player
         ## Check if a square is completed.
         square_corners = self._isSquareMove(move)
@@ -121,6 +130,8 @@ class GameBoard:
         else:
             self._switchPlayer()
         return square_corners
+
+
 
     def _switchPlayer(self):
         self.player = (self.player + 1) % 2
