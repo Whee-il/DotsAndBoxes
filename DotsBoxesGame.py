@@ -1,7 +1,7 @@
 import types
 import sys
 
-class GameBoard:
+class DotsAndBoxes:
     def __init__(self, width=4, height=4):
         """Take in input"""
 
@@ -27,7 +27,7 @@ class GameBoard:
         self.scores = [0,0]
 
     def Clone(self):
-        st = GameBoard()
+        st = DotsAndBoxes()
         st.playerJustMoved = 3 - self.player
         st.board = self.board
         st.squares = self.squares
@@ -218,8 +218,7 @@ class GameBoard:
         self.xdelta, self.ydelta = coord2[0] - coord1[0], coord2[1] - coord1[1]
 
         while((abs(self.xdelta) > 1 and abs(self.ydelta) == 0) or (abs(self.xdelta) == 0 and abs(self.ydelta) > 1)):
-            print ("XDELTA IS"), self.xdelta
-            print ("YDELTA IS"), self.ydelta
+
             print ("Bad coordinates, not adjacent points.")
             move = input("Try again. Move?")
 
@@ -274,7 +273,7 @@ def _test(width, height):
     """A small driver to make sure that the board works.  It's not
     safe to use this test function in production, because it uses
     input(). This is where it initializes and updates the score array"""
-    board = GameBoard(width, height)
+    board = DotsAndBoxes(width, height)
     turn = 1
     scores = [0, 0]
     while not board.isGameOver():
