@@ -75,7 +75,7 @@ class DotsAndBoxes:
         self.board = {}
         self.squares = {}
         self.player = 0
-        self.playerJustMoved = 2
+        self.playerJustMoved = 1
 
 
         """Initializes score array"""
@@ -165,17 +165,14 @@ class DotsAndBoxes:
         bottom-left corners of squares captured after a move."""
         move = self.rosettaStoneCoord(moveI)
         print(moveI)
-        print(move)
+        #print(move)
 
         assert (self._isGoodCoord(move[0]) and
                 self._isGoodCoord(move[1])), \
             "Bad coordinates, out of bounds of the board."
         move = self.makeMove(move[0], move[1])
-        while ( self.board.has_key(move)):
-            move = input("Bad move, line already occupied.")
-            self.DoMove(move)
-            "Bad move, line already occupied."
-        print(move)
+
+        #print(move)
 
         self.board[move] = self.player
         ## Check if a square is completed.
@@ -246,25 +243,14 @@ class DotsAndBoxes:
 
         while (self._isGoodCoord(move[0]) == False or self._isGoodCoord(move[1]) == False):
             return False
-            """
-            move = input("Invalid coordinates. Please reenter: ")
-            """
 
         while ((abs(self.xdelta) > 1 and abs(self.ydelta) == 0) or (abs(self.xdelta) == 0 and abs(self.ydelta) > 1)):
             return False
-            """"
-            print ("XDELTA IS"), self.xdelta
-            print ("YDELTA IS"), self.ydelta
-            move = input("Invalid Coordinates, not adjacent point. Move?")
-            self.xdelta, self.ydelta = move[1][0] - move[0][0], move[1][1] - move[0][1]
-            """
 
         while move[0][0] > self.width and move[1][0] > self.width  and move[0][1] > self.height and move[1][1] > self.height:
             return False
-            """
-            move = input("Invalid Coordinates, not inside boundaries. Move?")
-            """
-
+        while ( self.board.has_key(move)):
+            return False
         return True
 
 
@@ -315,17 +301,17 @@ class DotsAndBoxes:
         moves = []
         for h1 in range(self.height):
             for w1 in range(self.width):
-                for h2 in range(self.height):
-                    for w2 in range(self.width):
-                        if (self.ultimateCheck(((w1,h2),(w2,h2)))):
-                            moves.append(self.rosettaStoneIndex(((w1,h1),(w2,h2))))
+                for h2 in range(h1, self.height):
+                    for w2 in range(w1, self.width):
+                        if (self.ultimateCheck(((w1, h2), (w2, h2))) == True):
+                            moves.append(self.rosettaStoneIndex(((w1, h1), (w2, h2))))
 
         return moves
 
     #give it playerjustmoved. If playerjustmoved wins then return 1.0
-    def GetResults(self):
+    def GetResult(self,playerjm):
         if self.GetMoves() == []:
-            if self.scores[st.playerJustMoved] > self.scores[3 - st.playerJustMoved]:
+            if self.scores[self.player] > self.scores[((self.player + 1) % 2)]:
                 return 1.0
             else:
                 return 0.0
@@ -625,20 +611,22 @@ def UCT(rootstate, itermax, verbose = False):
         state = rootstate.Clone()
 
         # Select
+        print("Select")
         while node.untriedMoves == [] and node.childNodes != []: # node is fully expanded and non-terminal
             node = node.UCTSelectChild()
             state.DoMove(node.move)
-
+        print("Expand")
         # Expand
         if node.untriedMoves != []: # if we can expand (i.e. state/node is non-terminal)
             m = random.choice(node.untriedMoves) 
             state.DoMove(m)
             node = node.AddChild(m,state) # add child and descend tree
-
+        print("Rollout")
         # Rollout - this can often be made orders of magnitude quicker using a state.GetRandomMove() function
         while state.GetMoves() != []: # while state is non-terminal
-            state.DoMove(random.choice(state.GetMoves()))
 
+            state.DoMove(random.choice(state.GetMoves()))
+        print("Backpropagate")
         # Backpropagate
         while node != None: # backpropagate from the expanded node and work back to the root node
             node.Update(state.GetResult(node.playerJustMoved)) # state is terminal. Update node with result from POV of node.playerJustMoved
@@ -663,9 +651,9 @@ def UCTPlayGame():
         print(str(state))
 
         if state.playerJustMoved == 1:
-            #m = UCT(rootstate = state, itermax = 1000, verbose = False) # play with values for itermax and verbose = True
-            i = input("Player 1 Enter the location of your move")
-            m = state.rosettaStoneIndex(i)
+            m = UCT(rootstate = state, itermax = 1000, verbose = False) # play with values for itermax and verbose = True
+            #i = input("Player 1 Enter the location of your move")
+            #m = state.rosettaStoneIndex(i)
         else:
             #m = UCT(rootstate = state, itermax = 100, verbose = False)
             i = input("Player 2 Enter the location of your move")
@@ -674,6 +662,7 @@ def UCTPlayGame():
 
         #print("Best Move: " + str(m) + "\n")
         state.DoMove(m)
+
     if state.GetResult(state.playerJustMoved) == 1.0:
         print("Player " + str(state.playerJustMoved) + " wins!")
     elif state.GetResult(state.playerJustMoved) == 0.0:
