@@ -165,7 +165,7 @@ class DotsAndBoxes:
         bottom-left corners of squares captured after a move."""
         move = self.rosettaStoneCoord(moveI)
         print(moveI)
-        #print(move)
+        print(move)
 
         assert (self._isGoodCoord(move[0]) and
                 self._isGoodCoord(move[1])), \
@@ -244,14 +244,20 @@ class DotsAndBoxes:
         while (self._isGoodCoord(move[0]) == False or self._isGoodCoord(move[1]) == False):
             return False
 
-        while ((abs(self.xdelta) > 1 and abs(self.ydelta) == 0) or (abs(self.xdelta) == 0 and abs(self.ydelta) > 1)):
+        while (move[0][0] == move [0][1] == move [1][0] == move [1][1]):
             return False
+
+        while ((abs(self.xdelta) > 1 and abs(self.ydelta) == 0) or (abs(self.xdelta) == 0 and abs(self.ydelta) > 1)) or (abs(self.xdelta) > 1 and abs(self.ydelta) > 1):
+            return False
+
 
         while move[0][0] > self.width and move[1][0] > self.width  and move[0][1] > self.height and move[1][1] > self.height:
             return False
         while ( self.board.has_key(move)):
             return False
-        return True
+
+        if (((abs(self.xdelta == 0) and (abs(self.ydelta) == 1)) or ((abs(self.xdelta == 1) and (abs(self.ydelta) == 0))))):
+            return True
 
 
     def makeMove(self, coord1, coord2):
