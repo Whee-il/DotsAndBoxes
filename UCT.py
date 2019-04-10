@@ -154,6 +154,8 @@ class DotsAndBoxes:
                     for y2 in range(self.height):
                         if self.ultimateCheck(((x1, y1), (x2, y2))):
                             num = num + 1
+                        #print((x1, y1), (x2, y2))
+                        #print(move), ":", (num)
                         if move == num:
                             return ((x1, y1), (x2, y2))
 
@@ -164,8 +166,8 @@ class DotsAndBoxes:
         occurs, raise an AssertionError.  Returns a list of
         bottom-left corners of squares captured after a move."""
         move = self.rosettaStoneCoord(moveI)
-        print(moveI)
-        print(move)
+        #print(moveI)
+        #print(move)
 
         assert (self._isGoodCoord(move[0]) and
                 self._isGoodCoord(move[1])), \
@@ -247,16 +249,15 @@ class DotsAndBoxes:
         while (move[0][0] == move [0][1] == move [1][0] == move [1][1]):
             return False
 
-        while ((abs(self.xdelta) > 1 and abs(self.ydelta) == 0) or (abs(self.xdelta) == 0 and abs(self.ydelta) > 1)) or (abs(self.xdelta) > 1 and abs(self.ydelta) > 1):
-            return False
-
+        #while ((abs(self.xdelta) > 1 and abs(self.ydelta) == 0) or (abs(self.xdelta) == 0 and abs(self.ydelta) > 1)) or (abs(self.xdelta) > 1 and abs(self.ydelta) > 1):
+        #    return False
 
         while move[0][0] > self.width and move[1][0] > self.width  and move[0][1] > self.height and move[1][1] > self.height:
             return False
         while ( self.board.has_key(move)):
             return False
 
-        if (((abs(self.xdelta == 0) and (abs(self.ydelta) == 1)) or ((abs(self.xdelta == 1) and (abs(self.ydelta) == 0))))):
+        if (((abs(self.xdelta) == 0) and (abs(self.ydelta) == 1)) or ((abs(self.xdelta) == 1) and (abs(self.ydelta) == 0))):
             return True
 
 
@@ -617,22 +618,22 @@ def UCT(rootstate, itermax, verbose = False):
         state = rootstate.Clone()
 
         # Select
-        print("Select")
+        #print("Select")
         while node.untriedMoves == [] and node.childNodes != []: # node is fully expanded and non-terminal
             node = node.UCTSelectChild()
             state.DoMove(node.move)
-        print("Expand")
+        #print("Expand")
         # Expand
         if node.untriedMoves != []: # if we can expand (i.e. state/node is non-terminal)
             m = random.choice(node.untriedMoves) 
             state.DoMove(m)
             node = node.AddChild(m,state) # add child and descend tree
-        print("Rollout")
+        #print("Rollout")
         # Rollout - this can often be made orders of magnitude quicker using a state.GetRandomMove() function
         while state.GetMoves() != []: # while state is non-terminal
 
             state.DoMove(random.choice(state.GetMoves()))
-        print("Backpropagate")
+        #print("Backpropagate")
         # Backpropagate
         while node != None: # backpropagate from the expanded node and work back to the root node
             node.Update(state.GetResult(node.playerJustMoved)) # state is terminal. Update node with result from POV of node.playerJustMoved
@@ -652,12 +653,12 @@ def UCTPlayGame():
     #state = OXOState() # uncomment to play OXO
     state = DotsAndBoxes() # uncomment to play Dots and Boxes
     # state = NimState(15) # uncomment to play Nim with the given number of starting chips
-    print(state.GetMoves())
+    #print(state.GetMoves())
     while (state.GetMoves() != []):
         print(str(state))
 
         if state.playerJustMoved == 1:
-            m = UCT(rootstate = state, itermax = 1000, verbose = False) # play with values for itermax and verbose = True
+            m = UCT(rootstate = state, itermax = 1, verbose = False) # play with values for itermax and verbose = True
             #i = input("Player 1 Enter the location of your move")
             #m = state.rosettaStoneIndex(i)
         else:
