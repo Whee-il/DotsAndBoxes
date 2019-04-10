@@ -307,8 +307,8 @@ class DotsAndBoxes:
         moves = []
         for h1 in range(self.height):
             for w1 in range(self.width):
-                for h2 in range(h1, self.height):
-                    for w2 in range(w1, self.width):
+                for h2 in range(self.height):
+                    for w2 in range(self.width):
                         if (self.ultimateCheck(((w1, h2), (w2, h2))) == True):
                             moves.append(self.rosettaStoneIndex(((w1, h1), (w2, h2))))
 
@@ -652,7 +652,7 @@ def UCTPlayGame():
     #state = OXOState() # uncomment to play OXO
     state = DotsAndBoxes() # uncomment to play Dots and Boxes
     # state = NimState(15) # uncomment to play Nim with the given number of starting chips
-
+    print(state.GetMoves())
     while (state.GetMoves() != []):
         print(str(state))
 
