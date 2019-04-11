@@ -119,6 +119,7 @@ class DotsAndBoxes:
                                                  (x1 + 1, y1 - j), (x2, y2)]))
         else:
             for j in [-1, 1]:
+
                 if (b.has_key(mmove((x1, y1), (x1 - j, y1)))
                         and b.has_key(mmove((x1 - j, y1), (x1 - j, y1 + 1)))
                         and b.has_key(mmove((x1 - j, y1 + 1), (x2, y2)))):
@@ -166,8 +167,8 @@ class DotsAndBoxes:
         occurs, raise an AssertionError.  Returns a list of
         bottom-left corners of squares captured after a move."""
         move = self.rosettaStoneCoord(moveI)
-        #print(moveI)
-        #print(move)
+        print(moveI)
+        print(move)
 
         assert (self._isGoodCoord(move[0]) and
                 self._isGoodCoord(move[1])), \
@@ -243,21 +244,64 @@ class DotsAndBoxes:
         # check if line is taken
         self.xdelta, self.ydelta = move[1][0] - move[0][0], move[1][1] - move[0][1]
 
+        # print(move)
         while (self._isGoodCoord(move[0]) == False or self._isGoodCoord(move[1]) == False):
+            # print("Fail:1")
+            return False
+
+        while (move[0][0] == move[0][1] == move[1][0] == move[1][1]):
+            # print("Fail:2")
+            return False
+
+        # while ((abs(self.xdelta) > 1 and abs(self.ydelta) == 0) or (abs(self.xdelta) == 0 and abs(self.ydelta) > 1)) or (abs(self.xdelta) > 1 and abs(self.ydelta) > 1):
+        #    return False
+
+        while move[0][0] > self.width and move[1][0] > self.width and move[0][1] > self.height and move[1][
+            1] > self.height:
+            # print("Fail:3")
+            return False
+
+        """
+        mmove = self.organizeMove(move[0], move[1])
+        while (self.board.has_key(mmove)):
+            # print("Fail:4")
+            return False
+        """
+        if (((abs(self.xdelta) == 0) and (abs(self.ydelta) == 1)) or (
+                (abs(self.xdelta) == 1) and (abs(self.ydelta) == 0))):
+            # print("Good Move")
+            return True
+
+    def ultimateCheck2ThisTimeItsPersonal(self, move):
+        # user input format (paranthesis and number)
+        # xdelta, ydelta (length)
+        # check if line is taken
+        self.xdelta, self.ydelta = move[1][0] - move[0][0], move[1][1] - move[0][1]
+
+        #print(move)
+        while (self._isGoodCoord(move[0]) == False or self._isGoodCoord(move[1]) == False):
+            #print("Fail:1")
             return False
 
         while (move[0][0] == move [0][1] == move [1][0] == move [1][1]):
+            #print("Fail:2")
             return False
 
         #while ((abs(self.xdelta) > 1 and abs(self.ydelta) == 0) or (abs(self.xdelta) == 0 and abs(self.ydelta) > 1)) or (abs(self.xdelta) > 1 and abs(self.ydelta) > 1):
         #    return False
 
         while move[0][0] > self.width and move[1][0] > self.width  and move[0][1] > self.height and move[1][1] > self.height:
+            #print("Fail:3")
             return False
-        while ( self.board.has_key(move)):
+
+        mmove = self.organizeMove(move[0],move[1])
+
+        while ( self.board.has_key(mmove)):
+            #print("Fail:4")
             return False
 
         if (((abs(self.xdelta) == 0) and (abs(self.ydelta) == 1)) or ((abs(self.xdelta) == 1) and (abs(self.ydelta) == 0))):
+            #print("Good Move")
             return True
 
 
@@ -294,11 +338,22 @@ class DotsAndBoxes:
         else:
             return (tuple(coord2), tuple(coord1))
 
+    def organizeMove(self, coord1, coord2):
+        """Return a new "move", and ensure it's in canonical form.
+        (That is, force it so that it's an ordered tuple of tuples.)
+        """
+
+        if coord1 < coord2:
+            return (coord1, coord2)
+        else:
+            return (tuple(coord2), tuple(coord1))
+
     def _isGoodCoord(self, coord):
         """Returns true if the given coordinate is good.
 
         A coordinate is "good" if it's within the boundaries of the
         game board, and if the coordinates are integers."""
+
         return (0 <= coord[0] < self.width
                 and 0 <= coord[1] < self.height
                 and isinstance(coord[0], types.IntType)
@@ -306,11 +361,14 @@ class DotsAndBoxes:
 
     def GetMoves(self):
         moves = []
+        #print("Getting Moves")
         for h1 in range(self.height):
             for w1 in range(self.width):
                 for h2 in range(self.height):
                     for w2 in range(self.width):
-                        if (self.ultimateCheck(((w1, h2), (w2, h2))) == True):
+                        #print(((w1, h2), (w2, h2)))
+                        if (self.ultimateCheck2ThisTimeItsPersonal(((w1, h2), (w2, h2))) == True):
+                            #print("Good Move")
                             moves.append(self.rosettaStoneIndex(((w1, h1), (w2, h2))))
 
         return moves
@@ -318,11 +376,13 @@ class DotsAndBoxes:
     #give it playerjustmoved. If playerjustmoved wins then return 1.0
     def GetResult(self,playerjm):
         if self.GetMoves() == []:
+            print("Out of moves")
             if self.scores[self.player] > self.scores[((self.player + 1) % 2)]:
                 return 1.0
             else:
                 return 0.0
         else:
+            print("This is bad")
             return 0.0
 
 """def GetResult(self, playerjm):
@@ -618,22 +678,25 @@ def UCT(rootstate, itermax, verbose = False):
         state = rootstate.Clone()
 
         # Select
-        #print("Select")
+        print("Select")
         while node.untriedMoves == [] and node.childNodes != []: # node is fully expanded and non-terminal
             node = node.UCTSelectChild()
             state.DoMove(node.move)
-        #print("Expand")
+        print("Expand")
         # Expand
         if node.untriedMoves != []: # if we can expand (i.e. state/node is non-terminal)
             m = random.choice(node.untriedMoves) 
             state.DoMove(m)
             node = node.AddChild(m,state) # add child and descend tree
-        #print("Rollout")
+        print("Rollout")
         # Rollout - this can often be made orders of magnitude quicker using a state.GetRandomMove() function
         while state.GetMoves() != []: # while state is non-terminal
-
-            state.DoMove(random.choice(state.GetMoves()))
-        #print("Backpropagate")
+            #print("Moving")
+            print(state.GetMoves())
+            movie = random.choice(state.GetMoves())
+            #print(movie)
+            state.DoMove(movie)
+        print("Backpropagate")
         # Backpropagate
         while node != None: # backpropagate from the expanded node and work back to the root node
             node.Update(state.GetResult(node.playerJustMoved)) # state is terminal. Update node with result from POV of node.playerJustMoved
@@ -653,7 +716,7 @@ def UCTPlayGame():
     #state = OXOState() # uncomment to play OXO
     state = DotsAndBoxes() # uncomment to play Dots and Boxes
     # state = NimState(15) # uncomment to play Nim with the given number of starting chips
-    #print(state.GetMoves())
+    print(state.GetMoves())
     while (state.GetMoves() != []):
         print(str(state))
 
@@ -665,7 +728,6 @@ def UCTPlayGame():
             #m = UCT(rootstate = state, itermax = 100, verbose = False)
             i = input("Player 2 Enter the location of your move")
             m = state.rosettaStoneIndex(i)
-
 
         #print("Best Move: " + str(m) + "\n")
         state.DoMove(m)
