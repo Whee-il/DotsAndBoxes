@@ -84,8 +84,8 @@ class DotsAndBoxes:
     def Clone(self):
         st = DotsAndBoxes()
         st.playerJustMoved = 3 - self.player
-        st.board = self.board
-        st.squares = self.squares
+        st.board = self.board.copy()
+        st.squares = self.squares.copy()
         st.scores = self.scores
         return st
 
@@ -167,8 +167,8 @@ class DotsAndBoxes:
         occurs, raise an AssertionError.  Returns a list of
         bottom-left corners of squares captured after a move."""
         move = self.rosettaStoneCoord(moveI)
-        print(moveI)
-        print(move)
+        #print(moveI)
+        #print(move)
 
         assert (self._isGoodCoord(move[0]) and
                 self._isGoodCoord(move[1])), \
@@ -376,26 +376,15 @@ class DotsAndBoxes:
     #give it playerjustmoved. If playerjustmoved wins then return 1.0
     def GetResult(self,playerjm):
         if self.GetMoves() == []:
-            print("Out of moves")
+            #print("Out of moves")
             if self.scores[self.player] > self.scores[((self.player + 1) % 2)]:
                 return 1.0
             else:
                 return 0.0
         else:
-            print("This is bad")
+            #print("This is bad")
             return 0.0
 
-"""def GetResult(self, playerjm):
-    Get the game result from the viewpoint of playerjm.
-    for (x, y, z) in [(0, 1, 2), (3, 4, 5), (6, 7, 8), (0, 3, 6), (1, 4, 7), (2, 5, 8), (0, 4, 8),
-                      (2, 4, 6)]:
-        if self.board[x] == self.board[y] == self.board[z]:
-            if self.board[x] == playerjm:
-                return 1.0
-            else:
-                return 0.0
-    if self.GetMoves() == []: return 0.5  # draw
-    assert False  # Should not be possible to get here"""
 
 
 class NimState:
@@ -678,25 +667,18 @@ def UCT(rootstate, itermax, verbose = False):
         state = rootstate.Clone()
 
         # Select
-        print("Select")
         while node.untriedMoves == [] and node.childNodes != []: # node is fully expanded and non-terminal
             node = node.UCTSelectChild()
             state.DoMove(node.move)
-        print("Expand")
         # Expand
         if node.untriedMoves != []: # if we can expand (i.e. state/node is non-terminal)
             m = random.choice(node.untriedMoves) 
             state.DoMove(m)
             node = node.AddChild(m,state) # add child and descend tree
-        print("Rollout")
         # Rollout - this can often be made orders of magnitude quicker using a state.GetRandomMove() function
         while state.GetMoves() != []: # while state is non-terminal
-            #print("Moving")
-            print(state.GetMoves())
-            movie = random.choice(state.GetMoves())
-            #print(movie)
-            state.DoMove(movie)
-        print("Backpropagate")
+
+            state.DoMove(random.choice(state.GetMoves()))
         # Backpropagate
         while node != None: # backpropagate from the expanded node and work back to the root node
             node.Update(state.GetResult(node.playerJustMoved)) # state is terminal. Update node with result from POV of node.playerJustMoved
@@ -716,20 +698,21 @@ def UCTPlayGame():
     #state = OXOState() # uncomment to play OXO
     state = DotsAndBoxes() # uncomment to play Dots and Boxes
     # state = NimState(15) # uncomment to play Nim with the given number of starting chips
-    print(state.GetMoves())
     while (state.GetMoves() != []):
         print(str(state))
 
+
         if state.playerJustMoved == 1:
-            m = UCT(rootstate = state, itermax = 1, verbose = False) # play with values for itermax and verbose = True
+            m = UCT(rootstate = state, itermax = 100, verbose = False) # play with values for itermax and verbose = True
             #i = input("Player 1 Enter the location of your move")
             #m = state.rosettaStoneIndex(i)
         else:
             #m = UCT(rootstate = state, itermax = 100, verbose = False)
             i = input("Player 2 Enter the location of your move")
             m = state.rosettaStoneIndex(i)
+        print(str(state))
 
-        #print("Best Move: " + str(m) + "\n")
+        print("Best Move: " + str(m) + "\n")
         state.DoMove(m)
 
     if state.GetResult(state.playerJustMoved) == 1.0:
