@@ -143,22 +143,20 @@ class DotsAndBoxes:
 
     def generateRosettaStone(self):
 
-        num = 0
+        #num = 0
         self.Stone = []
         for x1 in range(self.width):
             for y1 in range(self.height):
                 for x2 in range(self.width):
                     for y2 in range(self.height):
                         if self.ultimateCheck(((x1, y1), (x2, y2))):
-                            num = num + 1
-                            self.Stone.append((num,((x1, y1), (x2, y2))))
+                            #num = num + 1
+                            self.Stone.append(((x1, y1), (x2, y2)))
+
         #print(self.Stone)
         return self.Stone
 
     def rosettaStoneIndex(self, move):
-        num = 0
-
-
 
         for pair in self.Stone:
             #print pair[0]
@@ -166,9 +164,9 @@ class DotsAndBoxes:
             #print move
             #print pair
             #print pair[0],pair[1], move
-            if pair[1] == move:
-                print "new move: ", pair[0] , "Old num: ", num
-                return pair[0]
+            if pair == move:
+                print "new move: ", self.Stone.index(pair)
+                return self.Stone.index(pair)
 
     def rosettaStoneCoord(self, move):
         num = 0
@@ -179,8 +177,8 @@ class DotsAndBoxes:
             #print move
             #print pair
             #print pair[0],pair[1], move
-            if pair[0] == move:
-                return pair[1]
+            if self.Stone.index(pair) == move:
+                return pair
 
     def DoMove(self, moveI):
 
@@ -279,17 +277,18 @@ class DotsAndBoxes:
         # while ((abs(self.xdelta) > 1 and abs(self.ydelta) == 0) or (abs(self.xdelta) == 0 and abs(self.ydelta) > 1)) or (abs(self.xdelta) > 1 and abs(self.ydelta) > 1):
         #    return False
 
+
         while move[0][0] > self.width and move[1][0] > self.width and move[0][1] > self.height and move[1][
             1] > self.height:
             # print("Fail:3")
             return False
 
-        """
         mmove = self.organizeMove(move[0], move[1])
-        while (self.board.has_key(mmove)):
+
+        if (mmove in self.Stone):
             # print("Fail:4")
             return False
-        """
+
         if (((abs(self.xdelta) == 0) and (abs(self.ydelta) == 1)) or (
                 (abs(self.xdelta) == 1) and (abs(self.ydelta) == 0))):
             # print("Good Move")
@@ -382,7 +381,7 @@ class DotsAndBoxes:
                 and isinstance(coord[1], types.IntType))
     def GenerateMoves(self):
 
-        for i in range(1,49):
+        for i in range(0,24):
             self.moves.append(i)
         return self.moves
 
@@ -734,7 +733,7 @@ def UCTPlayGame():
     # state = NimState(15) # uncomment to play Nim with the given number of starting chips
     while (state.GetMoves() != []):
         print(str(state))
-        #print(state.GetMoves())
+        print(state.GetMoves())
         #print(state.generateRosettaStone())
         if state.playerJustMoved == 1:
             m = UCT(rootstate = state, itermax = 1000, verbose = False) # play with values for itermax and verbose = True
@@ -745,7 +744,7 @@ def UCTPlayGame():
             i = input("Player 2 Enter the location of your move")
             m = state.rosettaStoneIndex(i)
 
-        print("Best Move: " + str(m) + "\n")
+        print("Best Move: " + str(state.rosettaStoneCoord(m)) + "\n")
         state.DoMove(m)
 
     if state.GetResult(state.playerJustMoved) == 1.0:
