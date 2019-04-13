@@ -76,7 +76,9 @@ class DotsAndBoxes:
         self.squares = {}
         self.player = 0
         self.playerJustMoved = 1
-
+        self.Stone = self.generateRosettaStone()
+        self.moves = []
+        self.GenerateMoves()
 
         """Initializes score array"""
         self.scores = [0,0]
@@ -87,6 +89,9 @@ class DotsAndBoxes:
         st.board = self.board.copy()
         st.squares = self.squares.copy()
         st.scores = self.scores
+        st.moves = self.moves[:]
+
+
         return st
 
     def isGameOver(self):
@@ -136,30 +141,46 @@ class DotsAndBoxes:
         "Return true if the move is in vertical orientation."
         return not self.isHorizontal(self, move)
 
-    def rosettaStoneIndex(self, move):
-        num = 0
-        for x1 in range(self.width):
-            for y1 in range(self.height):
-                for x2 in range(self.width):
-                    for y2 in range(self.height):
-                        if self.ultimateCheck(((x1,y1), (x2,y2))):
-                            num = num + 1
-                        if move == ((x1,y1),(x2,y2)):
-                            return num
+    def generateRosettaStone(self):
 
-    def rosettaStoneCoord(self, move):
         num = 0
+        self.Stone = []
         for x1 in range(self.width):
             for y1 in range(self.height):
                 for x2 in range(self.width):
                     for y2 in range(self.height):
                         if self.ultimateCheck(((x1, y1), (x2, y2))):
                             num = num + 1
-                        #print((x1, y1), (x2, y2))
-                        #print(move), ":", (num)
-                        if move == num:
-                            return ((x1, y1), (x2, y2))
+                            self.Stone.append((num,((x1, y1), (x2, y2))))
+        #print(self.Stone)
+        return self.Stone
 
+    def rosettaStoneIndex(self, move):
+        num = 0
+
+
+
+        for pair in self.Stone:
+            #print pair[0]
+            #print pair[1]
+            #print move
+            #print pair
+            #print pair[0],pair[1], move
+            if pair[1] == move:
+                print "new move: ", pair[0] , "Old num: ", num
+                return pair[0]
+
+    def rosettaStoneCoord(self, move):
+        num = 0
+
+        for pair in self.Stone:
+            #print pair[0]
+            #print pair[1]
+            #print move
+            #print pair
+            #print pair[0],pair[1], move
+            if pair[0] == move:
+                return pair[1]
 
     def DoMove(self, moveI):
 
@@ -167,6 +188,7 @@ class DotsAndBoxes:
         occurs, raise an AssertionError.  Returns a list of
         bottom-left corners of squares captured after a move."""
         move = self.rosettaStoneCoord(moveI)
+        #print("moving")
         #print(moveI)
         #print(move)
 
@@ -185,9 +207,10 @@ class DotsAndBoxes:
                 self.squares[corner] = self.player
         else:
             self._switchPlayer()
+        #print(self.moves)
+        #print(moveI)
+        self.moves.remove(moveI)
         return square_corners
-
-
 
     def _switchPlayer(self):
         self.player = (self.player + 1) % 2
@@ -301,10 +324,9 @@ class DotsAndBoxes:
             return False
 
         if (((abs(self.xdelta) == 0) and (abs(self.ydelta) == 1)) or ((abs(self.xdelta) == 1) and (abs(self.ydelta) == 0))):
-            #print("Good Move")
             return True
-
-
+        #print("Fail:5")
+        return False
     def makeMove(self, coord1, coord2):
         """Return a new "move", and ensure it's in canonical form.
         (That is, force it so that it's an ordered tuple of tuples.)
@@ -358,20 +380,25 @@ class DotsAndBoxes:
                 and 0 <= coord[1] < self.height
                 and isinstance(coord[0], types.IntType)
                 and isinstance(coord[1], types.IntType))
+    def GenerateMoves(self):
+
+        for i in range(1,49):
+            self.moves.append(i)
+        return self.moves
 
     def GetMoves(self):
-        moves = []
         #print("Getting Moves")
-        for h1 in range(self.height):
+
+        """for h1 in range(self.height):
             for w1 in range(self.width):
                 for h2 in range(self.height):
                     for w2 in range(self.width):
                         #print(((w1, h2), (w2, h2)))
                         if (self.ultimateCheck2ThisTimeItsPersonal(((w1, h2), (w2, h2))) == True):
-                            #print("Good Move")
-                            moves.append(self.rosettaStoneIndex(((w1, h1), (w2, h2))))
+                            moves.append(self.rosettaStoneIndex(((w1, h1), (w2, h2))))"""
+        #print("Finished getting Moves")
 
-        return moves
+        return self.moves
 
     #give it playerjustmoved. If playerjustmoved wins then return 1.0
     def GetResult(self,playerjm):
@@ -623,7 +650,9 @@ class Node:
             Return the added child node
         """
         n = Node(move = m, parent = self, state = s)
-        self.untriedMoves.remove(m)
+        #print(self.untriedMoves)
+        #print(m)
+        #self.untriedMoves.remove(m)
         self.childNodes.append(n)
         return n
     
@@ -665,16 +694,19 @@ def UCT(rootstate, itermax, verbose = False):
     for i in range(itermax):
         node = rootnode
         state = rootstate.Clone()
-
+        #print"Selecting"
         # Select
         while node.untriedMoves == [] and node.childNodes != []: # node is fully expanded and non-terminal
             node = node.UCTSelectChild()
+
             state.DoMove(node.move)
+        #print"Expanding"
         # Expand
         if node.untriedMoves != []: # if we can expand (i.e. state/node is non-terminal)
             m = random.choice(node.untriedMoves) 
             state.DoMove(m)
             node = node.AddChild(m,state) # add child and descend tree
+        #print"autobots"
         # Rollout - this can often be made orders of magnitude quicker using a state.GetRandomMove() function
         while state.GetMoves() != []: # while state is non-terminal
 
@@ -686,7 +718,9 @@ def UCT(rootstate, itermax, verbose = False):
 
     # Output some information about the tree - can be omitted
     if (verbose): print (rootnode.TreeToString(0))
-    else:print(rootnode.ChildrenToString())
+    else:
+        #print(rootnode.ChildrenToString())
+        """"""
 
     return sorted(rootnode.childNodes, key = lambda c: c.visits)[-1].move # return the move that was most visited
                 
@@ -700,17 +734,16 @@ def UCTPlayGame():
     # state = NimState(15) # uncomment to play Nim with the given number of starting chips
     while (state.GetMoves() != []):
         print(str(state))
-
-
+        #print(state.GetMoves())
+        #print(state.generateRosettaStone())
         if state.playerJustMoved == 1:
-            m = UCT(rootstate = state, itermax = 100, verbose = False) # play with values for itermax and verbose = True
+            m = UCT(rootstate = state, itermax = 1000, verbose = False) # play with values for itermax and verbose = True
             #i = input("Player 1 Enter the location of your move")
             #m = state.rosettaStoneIndex(i)
         else:
-            #m = UCT(rootstate = state, itermax = 100, verbose = False)
+            #m = UCT(rootstate = state, itermax = 1, verbose = False)
             i = input("Player 2 Enter the location of your move")
             m = state.rosettaStoneIndex(i)
-        print(str(state))
 
         print("Best Move: " + str(m) + "\n")
         state.DoMove(m)
