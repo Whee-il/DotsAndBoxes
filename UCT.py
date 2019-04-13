@@ -736,7 +736,7 @@ def UCTPlayGame():
         print(state.GetMoves())
         #print(state.generateRosettaStone())
         if state.playerJustMoved == 1:
-            m = UCT(rootstate = state, itermax = 1000, verbose = False) # play with values for itermax and verbose = True
+            m = UCT(rootstate = state, itermax = 10000, verbose = False) # play with values for itermax and verbose = True
             #i = input("Player 1 Enter the location of your move")
             #m = state.rosettaStoneIndex(i)
         else:
