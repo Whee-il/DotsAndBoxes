@@ -741,14 +741,14 @@ def UCTPlayGame():
         print(str(state))
         #print(state.GetMoves())
         #print(state.generateRosettaStone())
-        if state.playerJustMoved == 2:
+        if state.playerJustMoved == 1:
             m = UCT(rootstate = state, itermax = 10000, verbose = False) # play with values for itermax and verbose = True
             #i = input("Player 1 Enter the location of your move")
             #m = state.rosettaStoneIndex(i)
         else:
-            #m = UCT(rootstate = state, itermax = 1, verbose = False)
-            i = input("Player 1 Enter the location of your move")
-            m = state.rosettaStoneIndex(i)
+            m = UCT(rootstate = state, itermax = 1, verbose = False)
+            #i = input("Player 1 Enter the location of your move")
+            #m = state.rosettaStoneIndex(i)
 
         print("Best Move: " + str(state.rosettaStoneCoord(m)) + "\n")
         state.DoMove(m)
