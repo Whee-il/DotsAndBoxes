@@ -85,10 +85,10 @@ class DotsAndBoxes:
 
     def Clone(self):
         st = DotsAndBoxes()
-        st.playerJustMoved = 3 - self.player
+        st.playerJustMoved = st.playerJustMoved
         st.board = self.board.copy()
         st.squares = self.squares.copy()
-        st.scores = self.scores
+        st.scores = self.scores[:]
         st.moves = self.moves[:]
 
 
@@ -197,12 +197,12 @@ class DotsAndBoxes:
 
         #print(move)
 
-        self.board[move] = self.player
+        self.board[move] = self.playerJustMoved
         ## Check if a square is completed.
         square_corners = self._isSquareMove(move)
         if square_corners:
             for corner in square_corners:
-                self.squares[corner] = self.player
+                self.squares[corner] = self.playerJustMoved
         else:
             self._switchPlayer()
         #print(self.moves)
@@ -213,6 +213,7 @@ class DotsAndBoxes:
     def _switchPlayer(self):
         self.player = (self.player + 1) % 2
         self.playerJustMoved = 3 - self.playerJustMoved
+        #print self.playerJustMoved
 
     def getPlayer(self):
         return self.player
@@ -226,6 +227,8 @@ class DotsAndBoxes:
     def __str__(self):
         """Return a nice string representation of the board."""
         buffer = []
+
+        buffer.append("Player 1 Score: " + str(self.scores[0]) + "\t Player 2 Score: " + str(self.scores[1]) + "\n")
 
         ## do the top line
         for i in range(self.width - 1):
@@ -403,12 +406,15 @@ class DotsAndBoxes:
     def GetResult(self,playerjm):
         if self.GetMoves() == []:
             #print("Out of moves")
-            if self.scores[self.player] > self.scores[((self.player + 1) % 2)]:
+            #print playerjm
+            #print self.player
+            #print "Score: " ,self.scores, "playerjm: ", playerjm
+            if self.scores[playerjm-1] > self.scores[3-playerjm-1]:
                 return 1.0
             else:
                 return 0.0
         else:
-            #print("This is bad")
+            print("This is bad")
             return 0.0
 
 
@@ -733,20 +739,20 @@ def UCTPlayGame():
     # state = NimState(15) # uncomment to play Nim with the given number of starting chips
     while (state.GetMoves() != []):
         print(str(state))
-        print(state.GetMoves())
+        #print(state.GetMoves())
         #print(state.generateRosettaStone())
-        if state.playerJustMoved == 1:
+        if state.playerJustMoved == 2:
             m = UCT(rootstate = state, itermax = 10000, verbose = False) # play with values for itermax and verbose = True
             #i = input("Player 1 Enter the location of your move")
             #m = state.rosettaStoneIndex(i)
         else:
             #m = UCT(rootstate = state, itermax = 1, verbose = False)
-            i = input("Player 2 Enter the location of your move")
+            i = input("Player 1 Enter the location of your move")
             m = state.rosettaStoneIndex(i)
 
         print("Best Move: " + str(state.rosettaStoneCoord(m)) + "\n")
         state.DoMove(m)
-
+    print(str(state))
     if state.GetResult(state.playerJustMoved) == 1.0:
         print("Player " + str(state.playerJustMoved) + " wins!")
     elif state.GetResult(state.playerJustMoved) == 0.0:
