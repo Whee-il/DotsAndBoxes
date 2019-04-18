@@ -398,7 +398,7 @@ class Node:
             lambda c: c.wins/c.visits + UCTK * sqrt(2*log(self.visits)/c.visits to vary the amount of
             exploration versus exploitation.
         """
-        s = sorted(self.childNodes, key = lambda c: c.wins/c.visits + 10*sqrt(2*log(self.visits)/c.visits))[-1]
+        s = sorted(self.childNodes, key = lambda c: c.wins/c.visits + 5*sqrt(2*log(self.visits)/c.visits))[-1]
         return s
     
     def AddChild(self, m, s):
@@ -480,21 +480,22 @@ def UCT(rootstate, itermax, verbose = False):
 
     return sorted(rootnode.childNodes, key = lambda c: c.visits)[-1].move # return the move that was most visited
                 
-def UCTPlayGame():
+def UCTPlayGame(firstplayer,itterations):
     """ Play a sample game between two UCT players where each player gets a different number 
         of UCT iterations (= simulations = tree nodes).
     """
     state = DotsAndBoxes() # uncomment to play Dots and Boxes
     while (state.GetMoves() != []):
-        print(str(state))
+        ########print(str(state))
         #print(state.GetMoves())
         #print(state.generateRosettaStone())
         if state.playerJustMoved == 2:
-            m = UCT(rootstate = state, itermax = 10000, verbose = False) # play with values for itermax and verbose = True
+            m = UCT(rootstate = state, itermax = 2000, verbose = False) # play with values for itermax and verbose = True
             #i = input("Player 1 Enter the location of your move")
             #m = state.rosettaStoneIndex(i)
         else:
-            #m = UCT(rootstate = state, itermax = 1, verbose = False)
+            m = UCT(rootstate = state, itermax = 1, verbose = False)
+            """
             i = input("Player 1 Enter the location of your move")
             I = state.organizeMove(i[0],i[1])
             while state.ultimateCheck2ThisTimeItsPersonal(I) == False:
@@ -502,24 +503,31 @@ def UCTPlayGame():
                 print "That move was invalid."
                 i = input("Player 1 Enter the location of your move \n")
                 I = state.organizeMove(i[0], i[1])
-
+            
             m = state.rosettaStoneIndex(I)
+            """
 
-        print("Best Move: " + str(state.rosettaStoneCoord(m)) + "\n")
+        #print("Best Move: " + str(state.rosettaStoneCoord(m)) + "\n")
         state.DoMove(m)
-    print(str(state))
+    #########print(str(state))
     if state.GetResult(state.playerJustMoved) == 1.0:
-        print("Player " + str(state.playerJustMoved) + " wins!")
+        #print("Player " + str(state.playerJustMoved) + " wins!")
+        return state.playerJustMoved
     elif state.GetResult(state.playerJustMoved) == 0.0:
-        print("Player " + str(3 - state.playerJustMoved) + " wins!")
-    else: print("Nobody wins!")
+        #print("Player " + str(3 - state.playerJustMoved) + " wins!")
+        return 3 - state.playerJustMoved
+    else: """"""#print("Nobody wins!")
+    return state.playerJustMoved
 
 if __name__ == "__main__":
     """ Play a single game to the end using UCT for both players. 
     """
-    UCTPlayGame()
+    scores = [0,0]
+    for i in range(0,50):
+        scores[UCTPlayGame(2,1000)-1] += 1
+        print scores
+    print "Player 2, 1000 itterations vs 1 50 games" , scores
 
-            
-                          
-            
+
+
 
