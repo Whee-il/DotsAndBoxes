@@ -170,8 +170,13 @@ class DotsAndBoxes:
             self._switchPlayer()
         #print(self.moves)
         #print(moveI)
-        self.moves.remove(moveI)
+        #self.moves.remove(moveI)
+        self.removeMove(moveI)
         return square_corners
+
+    def removeMove(self, reMove):
+
+        self.moves.remove(reMove)
 
     def _switchPlayer(self):
         self.player = (self.player + 1) % 2
@@ -363,7 +368,7 @@ class DotsAndBoxes:
                             moves.append(self.rosettaStoneIndex(((w1, h1), (w2, h2))))"""
         #print("Finished getting Moves")
 
-        return self.moves
+        return self.moves[:]
 
     #give it playerjustmoved. If playerjustmoved wins then return 1.0
     def GetResult(self,playerjm):
@@ -375,11 +380,64 @@ class DotsAndBoxes:
             if self.scores[playerjm-1] > self.scores[3-playerjm-1]:
                 return 1.0
             else:
-                return 0.0
+                return -1.0
         else:
             print("This is bad")
             return 0.0
 
+
+class OXOState:
+    """ A state of the game, i.e. the game board.
+        Squares in the board are in this arrangement
+        012
+        345
+        678
+        where 0 = empty, 1 = player 1 (X), 2 = player 2 (O)
+    """
+
+    def __init__(self):
+        self.playerJustMoved = 2  # At the root pretend the player just moved is p2 - p1 has the first move
+        self.board = [0, 0, 0, 0, 0, 0, 0, 0, 0]  # 0 = empty, 1 = player 1, 2 = player 2
+
+    def Clone(self):
+        """ Create a deep clone of this game state.
+        """
+        st = OXOState()
+        st.playerJustMoved = self.playerJustMoved
+        st.board = self.board[:]
+        return st
+
+    def DoMove(self, move):
+        """ Update a state by carrying out the given move.
+            Must update playerToMove.
+        """
+        assert move >= 0 and move <= 8 and move == int(move) and self.board[move] == 0
+        self.playerJustMoved = 3 - self.playerJustMoved
+        self.board[move] = self.playerJustMoved
+
+    def GetMoves(self):
+        """ Get all possible moves from this state.
+        """
+        return [i for i in range(9) if self.board[i] == 0]
+
+    def GetResult(self, playerjm):
+        """ Get the game result from the viewpoint of playerjm.
+        """
+        for (x, y, z) in [(0, 1, 2), (3, 4, 5), (6, 7, 8), (0, 3, 6), (1, 4, 7), (2, 5, 8), (0, 4, 8), (2, 4, 6)]:
+            if self.board[x] == self.board[y] == self.board[z]:
+                if self.board[x] == playerjm:
+                    return 1.0
+                else:
+                    return 0.0
+        if self.GetMoves() == []: return 0.5  # draw
+        assert False  # Should not be possible to get here
+
+    def __repr__(self):
+        s = ""
+        for i in range(9):
+            s += ".XO"[self.board[i]]
+            if i % 3 == 2: s += "\n"
+        return s
 class Node:
     """ A node in the game tree. Note wins is always from the viewpoint of playerJustMoved.
         Crashes if state not specified.
@@ -398,7 +456,7 @@ class Node:
             lambda c: c.wins/c.visits + UCTK * sqrt(2*log(self.visits)/c.visits to vary the amount of
             exploration versus exploitation.
         """
-        s = sorted(self.childNodes, key = lambda c: c.wins/c.visits + 5*sqrt(2*log(self.visits)/c.visits))[-1]
+        s = sorted(self.childNodes, key = lambda c: c.wins/c.visits + 3.5*sqrt(2*log(self.visits)/c.visits))[-1]
         return s
     
     def AddChild(self, m, s):
@@ -408,8 +466,8 @@ class Node:
         n = Node(move = m, parent = self, state = s)
         #print(self.untriedMoves)
         #print(m)
-        #self.untriedMoves.remove(m)
         self.childNodes.append(n)
+
         return n
     
     def Update(self, result):
@@ -450,33 +508,49 @@ def UCT(rootstate, itermax, verbose = False):
     for i in range(itermax):
         node = rootnode
         state = rootstate.Clone()
-        #print"Selecting"
-        # Select
+        #print"Select"
+        #Select
+        #print state.GetMoves()
+        #print node.untriedMoves
         while node.untriedMoves == [] and node.childNodes != []: # node is fully expanded and non-terminal
+            #print "Selecting"
             node = node.UCTSelectChild()
-
             state.DoMove(node.move)
-        #print"Expanding"
-        # Expand
-        if node.untriedMoves != []: # if we can expand (i.e. state/node is non-terminal)
-            m = random.choice(node.untriedMoves) 
-            state.DoMove(m)
-            node = node.AddChild(m,state) # add child and descend tree
-        #print"autobots"
-        # Rollout - this can often be made orders of magnitude quicker using a state.GetRandomMove() function
-        while state.GetMoves() != []: # while state is non-terminal
+            #state.removeMove(node.move)
 
-            state.DoMove(random.choice(state.GetMoves()))
-        # Backpropagate
+        # Expand
+        #print"Expand"
+        #print state.GetMoves()
+
+        if node.untriedMoves != []: # if we can expand (i.e. state/node is non-terminal)
+            #print "Expanding"
+            m = random.choice(node.untriedMoves)
+            state.DoMove(m)
+            node.untriedMoves.remove(m)
+            node = node.AddChild(m,state) # add child and descend tree
+
+
+        # Rollout - this can often be made orders of magnitude quicker using a state.GetRandomMove() function
+        #print"autobots"
+        #print state.GetMoves()
+        while state.GetMoves() != []: # while state is non-terminal
+            #print "Rolling Out"
+            #print state.GetMoves()
+            r = random.choice(state.GetMoves())
+            state.DoMove(r)
+        #print "Backpropagate"
+        #print state.GetMoves()
+
         while node != None: # backpropagate from the expanded node and work back to the root node
+            #print "Backpropagating"
             node.Update(state.GetResult(node.playerJustMoved)) # state is terminal. Update node with result from POV of node.playerJustMoved
             node = node.parentNode
 
     # Output some information about the tree - can be omitted
     if (verbose): print (rootnode.TreeToString(0))
     else:
-        #print(rootnode.ChildrenToString())
-        """"""
+        print(rootnode.ChildrenToString())
+
 
     return sorted(rootnode.childNodes, key = lambda c: c.visits)[-1].move # return the move that was most visited
                 
@@ -485,17 +559,18 @@ def UCTPlayGame(firstplayer,itterations):
         of UCT iterations (= simulations = tree nodes).
     """
     state = DotsAndBoxes() # uncomment to play Dots and Boxes
+    #state = OXOState()
     while (state.GetMoves() != []):
-        ########print(str(state))
-        #print(state.GetMoves())
-        #print(state.generateRosettaStone())
+        print(str(state))
+
         if state.playerJustMoved == 2:
-            m = UCT(rootstate = state, itermax = 2000, verbose = False) # play with values for itermax and verbose = True
+            print "Thinking"
+            m = UCT(rootstate = state.Clone(), itermax = 5000, verbose = False) # play with values for itermax and verbose = True
             #i = input("Player 1 Enter the location of your move")
             #m = state.rosettaStoneIndex(i)
         else:
-            m = UCT(rootstate = state, itermax = 1, verbose = False)
-            """
+            """m = UCT(rootstate = state, itermax = 1, verbose = False)"""
+
             i = input("Player 1 Enter the location of your move")
             I = state.organizeMove(i[0],i[1])
             while state.ultimateCheck2ThisTimeItsPersonal(I) == False:
@@ -505,29 +580,29 @@ def UCTPlayGame(firstplayer,itterations):
                 I = state.organizeMove(i[0], i[1])
             
             m = state.rosettaStoneIndex(I)
-            """
 
         #print("Best Move: " + str(state.rosettaStoneCoord(m)) + "\n")
+        print state.GetMoves(), m
         state.DoMove(m)
-    #########print(str(state))
+        print state.GetMoves()
+    print(str(state))
     if state.GetResult(state.playerJustMoved) == 1.0:
-        #print("Player " + str(state.playerJustMoved) + " wins!")
+        print("Player " + str(state.playerJustMoved) + " wins!")
         return state.playerJustMoved
     elif state.GetResult(state.playerJustMoved) == 0.0:
-        #print("Player " + str(3 - state.playerJustMoved) + " wins!")
+        print("Player " + str(3 - state.playerJustMoved) + " wins!")
         return 3 - state.playerJustMoved
-    else: """"""#print("Nobody wins!")
+    else: print("Nobody wins!")
     return state.playerJustMoved
 
 if __name__ == "__main__":
     """ Play a single game to the end using UCT for both players. 
     """
+    UCTPlayGame(2,10000)
+    """
     scores = [0,0]
     for i in range(0,50):
         scores[UCTPlayGame(2,1000)-1] += 1
         print scores
-    print "Player 2, 1000 itterations vs 1 50 games" , scores
-
-
-
-
+    print "Player 2, 10000 itterations vs 1 50 games" , scores
+    """

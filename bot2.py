@@ -20,7 +20,7 @@ def edge2num(edge):
     if i % 2 == 1:
         num += BOARD_SIZE-1
     return(WEIGHTS[num])
-        
+
 
 def train_last_k(k):
     board = init_board()
