@@ -456,7 +456,7 @@ class Node:
             lambda c: c.wins/c.visits + UCTK * sqrt(2*log(self.visits)/c.visits to vary the amount of
             exploration versus exploitation.
         """
-        s = sorted(self.childNodes, key = lambda c: c.wins/c.visits + 3.5*sqrt(2*log(self.visits)/c.visits))[-1]
+        s = sorted(self.childNodes, key = lambda c: c.wins/c.visits + 1*sqrt(2*log(self.visits)/c.visits))[-1]
         return s
     
     def AddChild(self, m, s):
