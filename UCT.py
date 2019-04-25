@@ -380,7 +380,7 @@ class DotsAndBoxes:
             if self.scores[playerjm-1] > self.scores[3-playerjm-1]:
                 return 1.0
             else:
-                return -1.0
+                return 0.0
         else:
             print("This is bad")
             return 0.0
@@ -582,14 +582,13 @@ def UCTPlayGame(firstplayer,itterations):
             m = state.rosettaStoneIndex(I)
             """
         #print("Best Move: " + str(state.rosettaStoneCoord(m)) + "\n")
-        print state.GetMoves(), m
         state.DoMove(m)
-        print state.GetMoves()
     print(str(state))
+    print state.playerJustMoved
     if state.GetResult(state.playerJustMoved) == 1.0:
         print("Player " + str(state.playerJustMoved) + " wins!")
         return state.playerJustMoved
-    elif state.GetResult(state.playerJustMoved) == -1.0:
+    elif state.GetResult(state.playerJustMoved) == 0.0:
         print("Player " + str(3 - state.playerJustMoved) + " wins!")
         return 3 - state.playerJustMoved
     else: print("Nobody wins!")
