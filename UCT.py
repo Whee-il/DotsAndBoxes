@@ -569,9 +569,9 @@ def UCTPlayGame(firstplayer,itterations):
             #i = input("Player 1 Enter the location of your move")
             #m = state.rosettaStoneIndex(i)
         else:
-            """m = UCT(rootstate = state, itermax = 1, verbose = False)"""
+            m = UCT(rootstate = state.Clone(), itermax = 1, verbose = False)
 
-            i = input("Player 1 Enter the location of your move")
+            """i = input("Player 1 Enter the location of your move")
             I = state.organizeMove(i[0],i[1])
             while state.ultimateCheck2ThisTimeItsPersonal(I) == False:
                 print("\n \n" + str(state))
@@ -580,7 +580,7 @@ def UCTPlayGame(firstplayer,itterations):
                 I = state.organizeMove(i[0], i[1])
             
             m = state.rosettaStoneIndex(I)
-
+            """
         #print("Best Move: " + str(state.rosettaStoneCoord(m)) + "\n")
         print state.GetMoves(), m
         state.DoMove(m)
@@ -589,7 +589,7 @@ def UCTPlayGame(firstplayer,itterations):
     if state.GetResult(state.playerJustMoved) == 1.0:
         print("Player " + str(state.playerJustMoved) + " wins!")
         return state.playerJustMoved
-    elif state.GetResult(state.playerJustMoved) == 0.0:
+    elif state.GetResult(state.playerJustMoved) == -1.0:
         print("Player " + str(3 - state.playerJustMoved) + " wins!")
         return 3 - state.playerJustMoved
     else: print("Nobody wins!")
