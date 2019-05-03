@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import curses, sys, re
+import sys, re
 from time import sleep
 import numpy as np
 import random

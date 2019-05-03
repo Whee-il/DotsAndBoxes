@@ -116,7 +116,7 @@ class DotsAndBoxes:
                             #num = num + 1
                             self.Stone.append(((x1, y1), (x2, y2)))
 
-        print(self.Stone)
+        #print(self.Stone)
         return self.Stone
 
     def rosettaStoneIndex(self, move):
@@ -520,7 +520,7 @@ def UCTPlayGame(firstplayer,itterations):
 
         if state.playerJustMoved == 1:
             print "Thinking"
-            m = UCT(rootstate = state.Clone(), itermax = 10000, verbose = False) # play with values for itermax and verbose = True
+            m = UCT(rootstate = state.Clone(), itermax = 20000, verbose = False) # play with values for itermax and verbose = True
             #i = input("Player 1 Enter the location of your move")
             #m = state.rosettaStoneIndex(i)
         else:
