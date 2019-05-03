@@ -2,6 +2,7 @@ from bot1 import *
 from bot2 import *
 from dots_and_boxes import *
 
+Qtable = {}
 
 
 def get_Q_move_and_update(Q,board,l_rate=1,random_move_prob=1):
@@ -40,14 +41,26 @@ def get_Q_move_and_update(Q,board,l_rate=1,random_move_prob=1):
             q_max = q_tmp
             best_move = move
             
-    q_new = q_old + l_rate*(q_max - q_old) # q_max is the max_a{reward_a + q_next_state_a}   
-    
+    q_new = q_old + l_rate*(q_max - q_old) # q_max is the max_a{reward_a + q_next_state_a}
     if random.randrange(int(random_move_prob)): 
         best_move = random.choice(potential_moves)
-    
+    makeQtable(board,q_new, best_move)
     return(best_move,q_new)
     
-    
+def makeQtable(state, qvalue, action):
+    state_string = ""
+    for i in state:
+        for a in i:
+            if(i[a]):
+                state_string += "T"
+            if(i[a] == False):
+                state_string += "F"
+
+    state_string += str(action)
+    #print(state_string)
+    Qtable[state_string] = qvalue
+
+
 def init_Q2():
     board = init_board()
     Q = [dict() for i in xrange(len(sum(board,[]))+1)]
@@ -169,32 +182,33 @@ def player_move(board,Qedge,k,bot):
 Qedge = bot2_load(10) 
 
 ### play with parameters and rerun this part :)
-Q,wins = train2(5000,l_rate = 1,random_move_prob = 3, bot = 3)   #training games
+Q,wins = train2(10000,l_rate = 0.7,random_move_prob = 3, bot = 3)   #training games
 print(wins)
-Q,wins = train2(5000,Q, l_rate = 1,random_move_prob = 2, bot = 3)   #training games
-print(wins)
-Q1,wins = train2(1000,Q, l_rate = 0, random_move_prob = 1, print_score = False, bot = 0) #testing games
-print(wins)
-Q1,wins = train2(1000,Q, l_rate = 0, random_move_prob = 1, print_score = False, bot = 1) #testing games
-print(wins)
-Q1,wins = train2(1000,Q, l_rate = 0, random_move_prob = 1, print_score = False, bot = 2) #testing games
-print(wins)
-Q1,wins = train2(100,Q, l_rate = 0, random_move_prob = 1, print_score = False, bot = 3) #testing games
-print(wins)
+#Q,wins = train2(5000,Q, l_rate = 1,random_move_prob = 2, bot = 3)   #training games
+#print(wins)
+Q1,wins = train2(1000,Q, l_rate = 0.7, random_move_prob = 1, print_score = False, bot = 0) #testing games
+print(str(Qtable) + "  ")
+#Q1,wins = train2(1000,Q, l_rate = 0, random_move_prob = 1, print_score = False, bot = 1) #testing games
+#print(wins)
+#Q1,wins = train2(1000,Q, l_rate = 0, random_move_prob = 1, print_score = False, bot = 2) #testing games
+#print(wins)
+#Q1,wins = train2(100,Q, l_rate = 0, random_move_prob = 1, print_score = False, bot = 3) #testing games
+#print(wins)
 #
-#
+
 #
 ## final match!
-Q,wins = Q,wins = train2(5000,l_rate = 1,random_move_prob = 3, bot = 0) 
-Q1,wins = train2(100,Q, l_rate = 0, random_move_prob = 1, print_score = False, bot = 3) #testing games
-print('Kolo '+ str(0) + ': ' + str(wins))
-i = 1
+#Q,wins = Q,wins = train2(5000,l_rate = 1,random_move_prob = 3, bot = 0)
+#Q1,wins = train2(100,Q, l_rate = 0, random_move_prob = 1, print_score = False, bot = 3) #testing games
+#print('Kolo '+ str(0) + ': ' + str(wins))
+#i = 1
 
-while wins[0]<wins[1]:
-    Q,wins = train2(5000,Q, l_rate = 0.05,random_move_prob = 2, bot = 0) 
-    Q,wins = train2(1000,Q, l_rate = 0.05,random_move_prob = 1, bot = 3) 
-    Q1,wins = train2(100,Q, l_rate = 0, random_move_prob = 1, print_score = False, bot = 3) #testing games
-    print('Kolo '+ str(i) + ': ' + str(wins))
-    i += 1
+#while wins[0]<wins[1]:
+    #Q,wins = train2(5000,Q, l_rate = 0.05,random_move_prob = 2, bot = 0)
+    #Q,wins = train2(1000,Q, l_rate = 0.05,random_move_prob = 1, bot = 3)
+    #Q1,wins = train2(100,Q, l_rate = 0, random_move_prob = 1, print_score = False, bot = 3) #testing games
+    #print('Kolo '+ str(i) + ': ' + str(wins) + 'hello')
+    #i += 1
+
 
 #

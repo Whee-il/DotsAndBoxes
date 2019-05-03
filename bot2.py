@@ -6,7 +6,7 @@ import json
 
 
 WEIGHTS = np.array([2**i for i in xrange(2*BOARD_SIZE*(BOARD_SIZE-1))])
-gamma = 1 # discount factor
+gamma = 0.8 # discount factor
 RW = 10   # end score reward constant
 
 def board2num(board):
@@ -20,7 +20,7 @@ def edge2num(edge):
     if i % 2 == 1:
         num += BOARD_SIZE-1
     return(WEIGHTS[num])
-
+        
 
 def train_last_k(k):
     board = init_board()
