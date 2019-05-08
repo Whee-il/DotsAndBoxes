@@ -569,7 +569,7 @@ def UCTPlayGame(firstplayer,itterations):
     #state = OXOState()
     while (state.GetMoves() != []):
         print(str(state))
-        print state.Qboard
+        #print state.Qboard
         if state.playerJustMoved == 1:
             print "Thinking"
             m = UCT(rootstate = state.Clone(), itermax = 20, verbose = False) # play with values for itermax and verbose = True
