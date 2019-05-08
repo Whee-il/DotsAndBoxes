@@ -19,6 +19,7 @@ from math import *
 import random
 import types
 import sys
+import copy
 
 class DotsAndBoxes:
     def __init__(self, width=4, height=4):
@@ -60,8 +61,6 @@ class DotsAndBoxes:
 
         self.Qstone = self.generateRosettaStoneQ()
 
-        print "Stone", self.Stone
-        print "QStone", self.QStone
 
     def Clone(self):
         st = DotsAndBoxes()
@@ -70,7 +69,7 @@ class DotsAndBoxes:
         st.squares = self.squares.copy()
         st.scores = self.scores[:]
         st.moves = self.moves[:]
-        st.Qboard = self.Qboard[:]
+        st.Qboard = copy.deepcopy(self.Qboard)
 
         return st
 
@@ -168,7 +167,15 @@ class DotsAndBoxes:
             if self.Stone.index(pair) == move:
                 return pair
 
-
+    def rosettaStoneLine(self, move):
+        for pair in self.QStone:
+            #print pair[0]
+            #print pair[1]
+            #print move
+            #print pair
+            #print pair[0],pair[1], move
+            if self.QStone.index(pair) == move:
+                return pair
 
     def DoMove(self, moveI):
 
@@ -176,6 +183,7 @@ class DotsAndBoxes:
         occurs, raise an AssertionError.  Returns a list of
         bottom-left corners of squares captured after a move."""
         move = self.rosettaStoneCoord(moveI)
+        moveL = self.rosettaStoneLine(moveI)
         #print("moving")
         #print(moveI)
         #print(move)
@@ -199,6 +207,7 @@ class DotsAndBoxes:
         #print(moveI)
         #self.moves.remove(moveI)
         self.removeMove(moveI)
+        self.Qboard[moveL[0]][moveL[1]] = True
         return square_corners
 
     def removeMove(self, reMove):
@@ -560,10 +569,10 @@ def UCTPlayGame(firstplayer,itterations):
     #state = OXOState()
     while (state.GetMoves() != []):
         print(str(state))
-
+        print state.Qboard
         if state.playerJustMoved == 1:
             print "Thinking"
-            m = UCT(rootstate = state.Clone(), itermax = 20000, verbose = False) # play with values for itermax and verbose = True
+            m = UCT(rootstate = state.Clone(), itermax = 20, verbose = False) # play with values for itermax and verbose = True
             #i = input("Player 1 Enter the location of your move")
             #m = state.rosettaStoneIndex(i)
         else:
