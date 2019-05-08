@@ -4,7 +4,6 @@ from dots_and_boxes import *
 
 Qtable = {}
 
-
 def get_Q_move_and_update(Q,board,l_rate=1,random_move_prob=1):
     # l_rate is the learning rate
     # random_move_prob ~ one of how many moves will not be random

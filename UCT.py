@@ -41,10 +41,27 @@ class DotsAndBoxes:
         self.player = 0
         self.playerJustMoved = 1
         self.Stone = self.generateRosettaStone()
+
         self.moves = []
         self.GenerateMoves()
         """Initializes score array"""
         self.scores = [0,0]
+
+        #Create the Q table Board
+        even = [False for i in xrange(width - 1)]
+        odd = [False for i in xrange(width)]
+
+        self.Qboard = []
+        for i in xrange(width * 2 - 1):
+            if i % 2 == 0:
+                self.Qboard.append(even[:])
+            else:
+                self.Qboard.append(odd[:])
+
+        self.Qstone = self.generateRosettaStoneQ()
+
+        print "Stone", self.Stone
+        print "QStone", self.QStone
 
     def Clone(self):
         st = DotsAndBoxes()
@@ -53,7 +70,7 @@ class DotsAndBoxes:
         st.squares = self.squares.copy()
         st.scores = self.scores[:]
         st.moves = self.moves[:]
-
+        st.Qboard = self.Qboard[:]
 
         return st
 
@@ -108,16 +125,24 @@ class DotsAndBoxes:
 
         #num = 0
         self.Stone = []
-        for x1 in range(self.width):
-            for y1 in range(self.height):
-                for x2 in range(self.width):
-                    for y2 in range(self.height):
+        for y1 in range(self.height):
+            for y2 in range(self.height):
+                for x1 in range(self.width):
+                    for x2 in range(self.width):
                         if self.ultimateCheck(((x1, y1), (x2, y2))):
                             #num = num + 1
                             self.Stone.append(((x1, y1), (x2, y2)))
 
         #print(self.Stone)
         return self.Stone
+
+    def generateRosettaStoneQ(self):
+
+        self.QStone = []
+        for i, row in enumerate(self.Qboard):
+            for j, val in enumerate(self.Qboard[6 - i]):
+                self.QStone.append((6-i, j))
+
 
     def rosettaStoneIndex(self, move):
 
@@ -387,6 +412,24 @@ class DotsAndBoxes:
         else:
             print("This is bad")
             return 0.0
+
+    #####Q Table Code Ahead.  Tread Lightly
+
+    def getQTable(self, state, moveI):
+
+        moveL = rosettaStoneLine(moveI)
+
+        state_string = ""
+        for i in state:
+            for a in i:
+                if (i[a]):
+                    state_string += "T"
+                if (i[a] == False):
+                    state_string += "F"
+
+        state_string += str(moveL)
+
+        return Qtable[state_string]
 
 
 class Node:
