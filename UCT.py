@@ -25,7 +25,6 @@ import csv
 
 with open('deesandbees (1).csv') as csvfile:
     RawQTable = csv.reader(csvfile, delimiter=',')
-
     fullstate = ""
     switch = False
     qValue = 0
@@ -39,6 +38,7 @@ with open('deesandbees (1).csv') as csvfile:
         gamestate = fullstate[2:32]
         qTable[gamestate] = qValue
         fullstate = ""
+
 
 
 class DotsAndBoxes:
@@ -80,6 +80,7 @@ class DotsAndBoxes:
                 self.Qboard.append(odd[:])
 
         self.Qstone = self.generateRosettaStoneQ()
+
 
 
     def Clone(self):
@@ -161,7 +162,7 @@ class DotsAndBoxes:
         for i, row in enumerate(self.Qboard):
             for j, val in enumerate(self.Qboard[6 - i]):
                 self.QStone.append((6-i, j))
-
+        return self.QStone
 
     def rosettaStoneIndex(self, move):
 
@@ -452,14 +453,17 @@ class DotsAndBoxes:
 
         state_string = ""
         for i in state.Qboard:
+            print i
             for a in i:
-                if (i[a]):
+                #print i[a]
+                if (a == True):
                     state_string += "T"
-                if (i[a] == False):
+                if (a == False):
                     state_string += "F"
 
         state_string += str(moveL)
-
+        print state
+        print state.Qboard
         return qTable[state_string]
 
 
@@ -483,7 +487,8 @@ class Node:
             lambda c: c.wins/c.visits + UCTK * sqrt(2*log(self.visits)/c.visits to vary the amount of
             exploration versus exploitation.
         """
-        s = sorted(self.childNodes, key = lambda c: c.wins/c.visits + 1*sqrt(2*log(self.visits)/c.visits))[-1]
+
+        s = sorted(self.childNodes, key = lambda c: c.wins/c.visits + 0.5*sqrt(2*log(self.visits)/c.visits))[-1]
         return s
     
     def AddChild(self, m, s):
@@ -537,33 +542,45 @@ def UCT(rootstate, itermax, verbose = False):
     rootnode = Node(state = rootstate)
 
     for i in range(itermax):
+        q = 0
         node = rootnode
         state = rootstate.Clone()
+        selected = False
+
         #print"Select"
         #Select
-        #print state.GetMoves()
-        #print node.untriedMoves
+
         while node.untriedMoves == [] and node.childNodes != []: # node is fully expanded and non-terminal
-            #print "Selecting"
+            selected = True
             node = node.UCTSelectChild()
             state.DoMove(node.move)
             #state.removeMove(node.move)
 
         # Expand
-        #print"Expand"
-        #print state.GetMoves()
 
         if node.untriedMoves != []: # if we can expand (i.e. state/node is non-terminal)
             #print "Expanding"
             m = random.choice(node.untriedMoves)
+            #try:
+            q = state.getQValue(state, m)
+            """
+            except:
+                #print state
+                print selected
+                print "Untried Moves", node.untriedMoves
+                print "State.getMoves", state.GetMoves()
+                print m
+                print state.rosettaStoneCoord(m)
+                print state.rosettaStoneLine(m)
+                #"""
             state.DoMove(m)
             node.untriedMoves.remove(m)
             node = node.AddChild(m,state) # add child and descend tree
 
-
         # Rollout - this can often be made orders of magnitude quicker using a state.GetRandomMove() function
         #print"autobots"
         #print state.GetMoves()
+
         """
         while state.GetMoves() != []: # while state is non-terminal
             #print "Rolling Out"
@@ -571,11 +588,7 @@ def UCT(rootstate, itermax, verbose = False):
             r = random.choice(state.GetMoves())
             state.DoMove(r)
         """
-
         #print "Backpropagate"
-        print state.GetMoves()
-        q = state.getQValue(state, m)
-
         while node != None: # backpropagate from the expanded node and work back to the root node
             #print "Backpropagating"
             #node.Update(state.GetResult(node.playerJustMoved)) # state is terminal. Update node with result from POV of node.playerJustMoved
@@ -585,13 +598,8 @@ def UCT(rootstate, itermax, verbose = False):
     # Output some information about the tree - can be omitted
     if (verbose): print (rootnode.TreeToString(0))
     else:
-        """
         print(rootnode.ChildrenToString(state))
-        """
-
     return sorted(rootnode.childNodes, key = lambda c: c.visits)[-1].move # return the move that was most visited
-
-
 
 def UCTPlayGame(firstplayer,itterations):
     """ Play a sample game between two UCT players where each player gets a different number 
@@ -601,31 +609,29 @@ def UCTPlayGame(firstplayer,itterations):
 
     state = DotsAndBoxes() # uncomment to play Dots and Boxes
     #state = OXOState()
+
     while (state.GetMoves() != []):
         print(str(state))
         #print state.Qboard
-        if state.playerJustMoved == 1:
+        if state.playerJustMoved == 2:
             print "Thinking"
-            m = UCT(rootstate = state.Clone(), itermax = 1000, verbose = False) # play with values for itermax and verbose = True
+            m = UCT(rootstate = state.Clone(), itermax = 1, verbose = False) # play with values for itermax and verbose = True
             #i = input("Player 1 Enter the location of your move")
             #m = state.rosettaStoneIndex(i)
         else:
-            #m = UCT(rootstate = state.Clone(), itermax = 1, verbose = False)
+            m = UCT(rootstate = state.Clone(), itermax = 1, verbose = False)
 
-            #"""
-            i = input("Player 2 Enter the location of your move")
+            """
+            i = input("Player 1 Enter the location of your move")
             I = state.organizeMove(i[0],i[1])
             while state.ultimateCheck2ThisTimeItsPersonal(I) == False:
                 print("\n \n" + str(state))
                 print "That move was invalid."
-                i = input("Player 2 Enter the location of your move \n")
+                i = input("Player 1 Enter the location of your move \n")
                 I = state.organizeMove(i[0], i[1])
             
             m = state.rosettaStoneIndex(I)
-
-
-
-            #"""
+            """
         #print("Best Move: " + str(state.rosettaStoneCoord(m)) + "\n")
         state.DoMove(m)
     print(str(state))
