@@ -16,12 +16,53 @@
 # For more information about Monte Carlo Tree Search check out our web site at www.mcts.ai
 
 from math import *
+import sys
+for path in sys.path:
+	print (path)
 import random
 import types
-import sys
+
 import pygame
 import os
 
+
+# window dimensions
+WIN_W = 800
+WIN_H = 600
+
+# buffer
+BUFFER = WIN_H / 20
+
+# header dimensions
+HUD_H = 200
+
+# border
+BORDER_H = 20
+
+# screen dimensions
+SCREEN_W = WIN_W + 2 * BUFFER
+SCREEN_H = WIN_H + HUD_H + 2 * BUFFER + BORDER_H + 50
+
+# dot dimensions
+DD = WIN_W / 9
+
+# line dimensions
+LD = WIN_H / 5
+
+# other variables
+FPS = 60
+TIMER = 0
+
+#Colors
+BLACK = (0, 0, 0)  # dot color
+CREAM = (243, 239, 225)  # font color
+DB = (86, 70, 60)  # dark brown
+WHITE = (255, 255, 255)
+LC = (236, 204, 255)  # line color when mouse hovers over line
+LC2 = (0, 186, 255)  # line color after mouse is clicked over line
+PLACEHOLDER = (0, 100, 150)  # z color
+TEAL = (142, 210, 201)  # player fill
+ORANGE = (255, 122, 90)  # wozzy fill
 
 class DotsAndBoxes:
     def __init__(self, width=4, height=4):
@@ -467,7 +508,7 @@ class Game:
         self.play = play
         self.clock = clock
         self.turn = 0
-        self.title = Text(150, "Dots & Boxes", CREAM, SCREEN_W / 2, SCREEN_H / 10, "center", 'title')
+        self.title = Text(100, "Dots & Boxes", CREAM, SCREEN_W / 2, SCREEN_H / 10, "center", 'title')
         self.r = self.c = -1
         self.r2 = self.c2 = -1
         self.player_score = self.wozzy_score = 0
@@ -614,10 +655,10 @@ def main():
     game_bg_rect = game_bg.get_rect()
     game_bg_rect = game_bg_rect.move((0, HUD_H + BORDER_H))
 
-    player_name = Text(80, "Human:" , WHITE, 0, SCREEN_H / 10, 'left', 'name', 'player')
-    player_score = Text(100, str(run.player_score), WHITE, 0, SCREEN_H * 5 / 32, 'left', 'score', 'player')
-    wozzy_name = Text(80, "Wozzy:", WHITE, 0, SCREEN_H / 10, 'right', 'name', 'wozzy')
-    wozzy_score = Text(100, str(run.wozzy_score), WHITE, 0, SCREEN_H * 5 / 32, 'right', 'score', 'wozzy')
+    player_name = Text(60, "Human:" , WHITE, 0, SCREEN_H / 10, 'left', 'name', 'player')
+    player_score = Text(80, str(run.player_score), WHITE, 0, SCREEN_H * 5 / 32, 'left', 'score', 'player')
+    wozzy_name = Text(60, "Wozzy:", WHITE, 0, SCREEN_H / 10, 'right', 'name', 'wozzy')
+    wozzy_score = Text(80, str(run.wozzy_score), WHITE, 0, SCREEN_H * 5 / 32, 'right', 'score', 'wozzy')
 
     dts = DotsAndBoxes()
 

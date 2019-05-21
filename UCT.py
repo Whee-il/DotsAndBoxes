@@ -41,7 +41,7 @@ BORDER_H = 20
 
 # screen dimensions
 SCREEN_W = WIN_W + 2 * BUFFER
-SCREEN_H = WIN_H + HUD_H + 2 * BUFFER + BORDER_H
+SCREEN_H = WIN_H + HUD_H + 2 * BUFFER + BORDER_H + 50
 
 # dot dimensions
 DD = WIN_H / 10
@@ -65,7 +65,7 @@ TEAL = (142, 210, 201)  # player fill
 ORANGE = (255, 122, 90)  # wozzy fill
 
 
-
+#Open the Q-Table
 with open('deesandbees (1).csv') as csvfile:
     RawQTable = csv.reader(csvfile, delimiter=',')
     fullstate = ""
@@ -747,26 +747,28 @@ class Object(pygame.sprite.Sprite):
                     # update scores
                     if len(box_made) > 0:
                         for box in box_made:
-                            if run.turn%2 == 0:
+                            if dts.playerJustMoved == 2:
+                                #print("UpdateComputer")
                                 run.wozzy_score = dts.scores[1]
                                 wozzy_score.image = wozzy_score.font.render(str(run.wozzy_score), 1, WHITE)
                                 for z in z_group:
-                                    print "box left: " + str(z.rect.left) + " | box bottom: " + str(z.rect.bottom)
-                                    print "box made: " + str(box[0]) + " | box made bottom : " + str(box[1])
-                                    if z.rect.left == box[0] and z.rect.bottom == box[1]:
-                                        print "zcapasda" + str(z.rect.x) + str(z.rect.y)
+                                    #print "box left: " + str(z.rect.left) + " | box bottom: " + str(z.rect.bottom)
+                                    #print "box made: " + str(box[0]) + " | box made bottom : " + str(box[1])
+                                    if z.rect.left == (600-(240*(2-box[0]))) and z.rect.bottom == (1030-(240* (box[1]))):
+                                        #print "zcapasda" + str(z.rect.x) + str(z.rect.y)
                                         z.image.fill(ORANGE)
                                         z.image.set_alpha(255)
 
                             else:
+                                #print("UpdateHuman")
                                 run.player_score = dts.scores[0]
                                 player_score.image = player_score.font.render(str(run.player_score), 1, WHITE)
                                 for z in z_group:
-                                    if z.rect.x == box[0] and z.rect.y == box[1]:
-                                        print "adpoasjpajp"  + str(z.rect.x) + str(z.rect.y)
+                                    if z.rect.left == (600-(240*(2-box[0]))) and z.rect.bottom == (1030-(240* (box[1]))):
+                                        #print "adpoasjpajp"  + str(z.rect.x) + str(z.rect.y)
                                         z.image.fill(TEAL)
                                         z.image.set_alpha(255)
-                            print dts.scores[0], dts.scores[1]
+                            #print dts.scores[0], dts.scores[1]
 
                 # make object transparent again if mouse isn't hovering over it / object wasn't clicked
             if self.hitbox.collidepoint(pygame.mouse.get_pos()) == 0:
