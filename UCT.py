@@ -28,13 +28,13 @@ import os
 
 # window dimensions
 WIN_W = 800
-WIN_H = 800
+WIN_H = 400
 
 # buffer
 BUFFER = WIN_H / 20
 
 # header dimensions
-HUD_H = 250
+HUD_H = 200
 
 # border
 BORDER_H = 20
@@ -44,10 +44,10 @@ SCREEN_W = WIN_W + 2 * BUFFER
 SCREEN_H = WIN_H + HUD_H + 2 * BUFFER + BORDER_H + 50
 
 # dot dimensions
-DD = WIN_H / 10
+DD = WIN_W / 20
 
 # line dimensions
-LD = WIN_H / 5
+LD = WIN_H / 10
 
 # other variables
 FPS = 60
@@ -752,10 +752,10 @@ class Object(pygame.sprite.Sprite):
                                 run.wozzy_score = dts.scores[1]
                                 wozzy_score.image = wozzy_score.font.render(str(run.wozzy_score), 1, WHITE)
                                 for z in z_group:
-                                    #print "box left: " + str(z.rect.left) + " | box bottom: " + str(z.rect.bottom)
-                                    #print "box made: " + str(box[0]) + " | box made bottom : " + str(box[1])
-                                    if z.rect.left == (600-(240*(2-box[0]))) and z.rect.bottom == (1030-(240* (box[1]))):
-                                        #print "zcapasda" + str(z.rect.x) + str(z.rect.y)
+                                    print "box left: " + str(z.rect.left) + " | box bottom: " + str(z.rect.bottom)
+                                    print "box made: " + str(box[0]) + " | box made bottom : " + str(box[1])
+                                    if z.rect.left == (220-(80*(2-box[0]))) and z.rect.bottom == (480-(80* (box[1]))):
+                                        print "zcapasda" + str(z.rect.x) + str(z.rect.y)
                                         z.image.fill(ORANGE)
                                         z.image.set_alpha(255)
 
@@ -764,8 +764,8 @@ class Object(pygame.sprite.Sprite):
                                 run.player_score = dts.scores[0]
                                 player_score.image = player_score.font.render(str(run.player_score), 1, WHITE)
                                 for z in z_group:
-                                    if z.rect.left == (600-(240*(2-box[0]))) and z.rect.bottom == (1030-(240* (box[1]))):
-                                        #print "adpoasjpajp"  + str(z.rect.x) + str(z.rect.y)
+                                    if z.rect.left == (220-(80*(2-box[0]))) and z.rect.bottom == (480-(80* (box[1]))):
+                                        print "adpoasjpajp"  + str(z.rect.x) + str(z.rect.y)
                                         z.image.fill(TEAL)
                                         z.image.set_alpha(255)
                             #print dts.scores[0], dts.scores[1]
@@ -781,7 +781,7 @@ class Game:
         self.play = play
         self.clock = clock
         self.turn = 0
-        self.title = Text(150, "Dots & Boxes", CREAM, SCREEN_W / 2, SCREEN_H / 10, "center", 'title')
+        self.title = Text(100, "Dots & Boxes", CREAM, SCREEN_W / 2, SCREEN_H / 10, "center", 'title')
         self.r = self.c = -1
         self.r2 = self.c2 = -1
         self.player_score = self.wozzy_score = 0
@@ -928,10 +928,10 @@ def main():
     game_bg_rect = game_bg.get_rect()
     game_bg_rect = game_bg_rect.move((0, HUD_H + BORDER_H))
 
-    player_name = Text(80, "Human:" , WHITE, 0, SCREEN_H / 10, 'left', 'name', 'player')
-    player_score = Text(100, str(run.player_score), WHITE, 0, SCREEN_H * 5 / 32, 'left', 'score', 'player')
-    wozzy_name = Text(80, "Wozzy:", WHITE, 0, SCREEN_H / 10, 'right', 'name', 'wozzy')
-    wozzy_score = Text(100, str(run.wozzy_score), WHITE, 0, SCREEN_H * 5 / 32, 'right', 'score', 'wozzy')
+    player_name = Text(60, "Human:" , WHITE, 0, SCREEN_H / 10, 'left', 'name', 'player')
+    player_score = Text(80, str(run.player_score), WHITE, 0, SCREEN_H * 5 / 32, 'left', 'score', 'player')
+    wozzy_name = Text(60, "Wozzy:", WHITE, 0, SCREEN_H / 10, 'right', 'name', 'wozzy')
+    wozzy_score = Text(80, str(run.wozzy_score), WHITE, 0, SCREEN_H * 5 / 32, 'right', 'score', 'wozzy')
 
     dts = DotsAndBoxes()
 
