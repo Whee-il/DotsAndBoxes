@@ -1,87 +1,26 @@
 # This is a very simple implementation of the UCT Monte Carlo Tree Search algorithm in Python 2.7.
 # The function UCT(rootstate, itermax, verbose = False) is towards the bottom of the code.
 # It aims to have the clearest and simplest possible code, and for the sake of clarity, the code
-# is orders of magnitude less efficient than it could be made, particularly by using a 
+# is orders of magnitude less efficient than it could be made, particularly by using a
 # state.GetRandomMove() or state.DoRandomRollout() function.
-# 
+#
 # Example GameState classes for Nim, OXO and Othello are included to give some idea of how you
-# can write your own GameState use UCT in your 2-player game. Change the game to be played in 
+# can write your own GameState use UCT in your 2-player game. Change the game to be played in
 # the UCTPlayGame() function at the bottom of the code.
-# 
+#
 # Written by Peter Cowling, Ed Powley, Daniel Whitehouse (University of York, UK) September 2012.
-# 
+#
 # Licence is granted to freely use and distribute for any sensible/legal purpose so long as this comment
 # remains in any distributed code.
-# 
+#
 # For more information about Monte Carlo Tree Search check out our web site at www.mcts.ai
 
 from math import *
 import random
 import types
 import sys
-import copy
-import csv
 import pygame
 import os
-
-#Game Constants
-
-# window dimensions
-WIN_W = 800
-WIN_H = 800
-
-# buffer
-BUFFER = WIN_H / 20
-
-# header dimensions
-HUD_H = 250
-
-# border
-BORDER_H = 20
-
-# screen dimensions
-SCREEN_W = WIN_W + 2 * BUFFER
-SCREEN_H = WIN_H + HUD_H + 2 * BUFFER + BORDER_H
-
-# dot dimensions
-DD = WIN_H / 10
-
-# line dimensions
-LD = WIN_H / 5
-
-# other variables
-FPS = 60
-TIMER = 0
-
-#Colors
-BLACK = (0, 0, 0)  # dot color
-CREAM = (243, 239, 225)  # font color
-DB = (86, 70, 60)  # dark brown
-WHITE = (255, 255, 255)
-LC = (236, 204, 255)  # line color when mouse hovers over line
-LC2 = (0, 186, 255)  # line color after mouse is clicked over line
-PLACEHOLDER = (0, 100, 150)  # z color
-TEAL = (142, 210, 201)  # player fill
-ORANGE = (255, 122, 90)  # wozzy fill
-
-
-
-with open('deesandbees (1).csv') as csvfile:
-    RawQTable = csv.reader(csvfile, delimiter=',')
-    fullstate = ""
-    switch = False
-    qValue = 0
-    qTable = {}
-    for row in RawQTable:
-        for char in row:
-            fullstate += char
-            #print gamestate
-
-        qValue = fullstate[34:]
-        gamestate = fullstate[2:32]
-        qTable[gamestate] = qValue
-        fullstate = ""
-
 
 
 class DotsAndBoxes:
@@ -105,26 +44,10 @@ class DotsAndBoxes:
         self.player = 0
         self.playerJustMoved = 1
         self.Stone = self.generateRosettaStone()
-
         self.moves = []
         self.GenerateMoves()
         """Initializes score array"""
         self.scores = [0,0]
-
-        #Create the Q table Board
-        even = [False for i in xrange(width - 1)]
-        odd = [False for i in xrange(width)]
-
-        self.Qboard = []
-        for i in xrange(width * 2 - 1):
-            if i % 2 == 0:
-                self.Qboard.append(even[:])
-            else:
-                self.Qboard.append(odd[:])
-
-        self.Qstone = self.generateRosettaStoneQ()
-
-
 
     def Clone(self):
         st = DotsAndBoxes()
@@ -133,7 +56,7 @@ class DotsAndBoxes:
         st.squares = self.squares.copy()
         st.scores = self.scores[:]
         st.moves = self.moves[:]
-        st.Qboard = copy.deepcopy(self.Qboard)
+
 
         return st
 
@@ -188,24 +111,16 @@ class DotsAndBoxes:
 
         #num = 0
         self.Stone = []
-        for y1 in range(self.height):
-            for y2 in range(self.height):
-                for x1 in range(self.width):
-                    for x2 in range(self.width):
+        for x1 in range(self.width):
+            for y1 in range(self.height):
+                for x2 in range(self.width):
+                    for y2 in range(self.height):
                         if self.ultimateCheck(((x1, y1), (x2, y2))):
                             #num = num + 1
                             self.Stone.append(((x1, y1), (x2, y2)))
 
         #print(self.Stone)
         return self.Stone
-
-    def generateRosettaStoneQ(self):
-
-        self.QStone = []
-        for i, row in enumerate(self.Qboard):
-            for j, val in enumerate(self.Qboard[6 - i]):
-                self.QStone.append((6-i, j))
-        return self.QStone
 
     def rosettaStoneIndex(self, move):
 
@@ -216,10 +131,8 @@ class DotsAndBoxes:
             #print pair
             #print pair[0],pair[1], move
             if pair == move:
-                #print "new move: ", self.Stone.index(pair)
+                print "new move: ", self.Stone.index(pair)
                 return self.Stone.index(pair)
-
-
 
     def rosettaStoneCoord(self, move):
         num = 0
@@ -233,23 +146,12 @@ class DotsAndBoxes:
             if self.Stone.index(pair) == move:
                 return pair
 
-    def rosettaStoneLine(self, move):
-        for pair in self.QStone:
-            #print pair[0]
-            #print pair[1]
-            #print move
-            #print pair
-            #print pair[0],pair[1], move
-            if self.QStone.index(pair) == move:
-                return pair
-
     def DoMove(self, moveI):
 
         """Place a particular move on the board.  If any wackiness
         occurs, raise an AssertionError.  Returns a list of
         bottom-left corners of squares captured after a move."""
         move = self.rosettaStoneCoord(moveI)
-        moveL = self.rosettaStoneLine(moveI)
         #print("moving")
         #print(moveI)
         #print(move)
@@ -271,14 +173,8 @@ class DotsAndBoxes:
             self._switchPlayer()
         #print(self.moves)
         #print(moveI)
-        #self.moves.remove(moveI)
-        self.removeMove(moveI)
-        self.Qboard[moveL[0]][moveL[1]] = True
+        self.moves.remove(moveI)
         return square_corners
-
-    def removeMove(self, reMove):
-
-        self.moves.remove(reMove)
 
     def _switchPlayer(self):
         self.player = (self.player + 1) % 2
@@ -297,7 +193,7 @@ class DotsAndBoxes:
     def __str__(self):
         """Return a nice string representation of the board."""
         buffer = []
-
+        print self.squares
         buffer.append("Player 1 Score: " + str(self.scores[0]) + "\t Player 2 Score: " + str(self.scores[1]) + "\n")
 
         ## do the top line
@@ -470,7 +366,7 @@ class DotsAndBoxes:
                             moves.append(self.rosettaStoneIndex(((w1, h1), (w2, h2))))"""
         #print("Finished getting Moves")
 
-        return self.moves[:]
+        return self.moves
 
     #give it playerjustmoved. If playerjustmoved wins then return 1.0
     def GetResult(self,playerjm):
@@ -479,7 +375,6 @@ class DotsAndBoxes:
             #print playerjm
             #print self.player
             #print "Score: " ,self.scores, "playerjm: ", playerjm
-            #print self
             if self.scores[playerjm-1] > self.scores[3-playerjm-1]:
                 return 1.0
             else:
@@ -488,213 +383,6 @@ class DotsAndBoxes:
             print("This is bad")
             return 0.0
 
-    #####Q Table Code Ahead.  Tread Lightly
-
-    def getQValue(self, state, moveI):
-
-        moveL = state.rosettaStoneLine(moveI)
-
-        state_string = ""
-        for i in state.Qboard:
-            #print i
-            for a in i:
-                #print i[a]
-                if (a == True):
-                    state_string += "T"
-                if (a == False):
-                    state_string += "F"
-
-        state_string += str(moveL)
-        #print state
-        #print state.Qboard
-        try:
-            return qTable[state_string]
-        except:
-            return 0
-
-
-
-
-class Node:
-    """ A node in the game tree. Note wins is always from the viewpoint of playerJustMoved.
-        Crashes if state not specified.
-    """
-    def __init__(self, move = None, parent = None, state = None):
-        self.move = move # the move that got us to this node - "None" for the root node
-        self.parentNode = parent # "None" for the root node
-        self.childNodes = []
-        self.wins = 0
-        self.visits = 0
-        self.untriedMoves = state.GetMoves() # future child nodes
-        self.playerJustMoved = state.playerJustMoved # the only part of the state that the Node needs later
-        
-    def UCTSelectChild(self):
-        """ Use the UCB1 formula to select a child node. Often a constant UCTK is applied so we have
-            lambda c: c.wins/c.visits + UCTK * sqrt(2*log(self.visits)/c.visits to vary the amount of
-            exploration versus exploitation.
-        """
-
-        s = sorted(self.childNodes, key = lambda c: c.wins/c.visits + 1*sqrt(2*log(self.visits)/c.visits))[-1]
-        return s
-    
-    def AddChild(self, m, s):
-        """ Remove m from untriedMoves and add a new child node for this move.
-            Return the added child node
-        """
-        n = Node(move = m, parent = self, state = s)
-        #print(self.untriedMoves)
-        #print(m)
-        self.childNodes.append(n)
-
-        return n
-    
-    def Update(self, result):
-        """ Update this node - one additional visit and result additional wins. result must be from the viewpoint of playerJustmoved.
-        """
-        self.visits += 1
-
-        self.wins += float(result)
-
-    def __repr__(self):
-        return "[M:" + str(self.move) + " W/V:" + str(self.wins) + "/" + str(self.visits) + " U:" + str(self.untriedMoves) + "]"
-
-    def toString(self, state):
-        return "[M:" + str(state.rosettaStoneCoord(self.move)) + " W/V:" + str(self.wins) + "/" + str(self.visits) + " U:" + str(self.untriedMoves) + "]"
-
-    def TreeToString(self, indent):
-        s = self.IndentString(indent) + str(self)
-        for c in self.childNodes:
-             s += c.TreeToString(indent+1)
-        return s
-
-    def IndentString(self,indent):
-        s = "\n"
-        for i in range (1,indent+1):
-            s += "| "
-        return s
-
-    def ChildrenToString(self, state):
-        s = ""
-        for c in self.childNodes:
-             s += c.toString(state) + "\n"
-        return s
-
-
-def UCT(rootstate, itermax, verbose = False):
-    """ Conduct a UCT search for itermax iterations starting from rootstate.
-        Return the best move from the rootstate.
-        Assumes 2 alternating players (player 1 starts), with game results in the range [0.0, 1.0]."""
-
-    rootnode = Node(state = rootstate)
-
-    for i in range(itermax):
-        q = 0
-        node = rootnode
-        state = rootstate.Clone()
-        selected = False
-
-        #print"Select"
-        #Select
-
-        while node.untriedMoves == [] and node.childNodes != []: # node is fully expanded and non-terminal
-            selected = True
-            node = node.UCTSelectChild()
-            state.DoMove(node.move)
-            #state.removeMove(node.move)
-
-        # Expand
-        rollout = False
-        if node.untriedMoves != []: # if we can expand (i.e. state/node is non-terminal)
-            #print "Expanding"
-            m = random.choice(node.untriedMoves)
-            #try:
-            q = state.getQValue(state, m)
-
-            if q==0:
-                rollout = True
-            """
-            except:
-                #print state
-                print selected
-                print "Untried Moves", node.untriedMoves
-                print "State.getMoves", state.GetMoves()
-                print m
-                print state.rosettaStoneCoord(m)
-                print state.rosettaStoneLine(m)
-                #"""
-            state.DoMove(m)
-            node.untriedMoves.remove(m)
-            node = node.AddChild(m,state) # add child and descend tree
-
-        # Rollout - this can often be made orders of magnitude quicker using a state.GetRandomMove() function
-        #print"autobots"
-        #print state.GetMoves()
-
-        if rollout:
-            while state.GetMoves() != []: # while state is non-terminal
-                #print "Rolling Out"
-                #print state.GetMoves()
-                r = random.choice(state.GetMoves())
-                state.DoMove(r)
-
-        #print "Backpropagate"
-        while node != None: # backpropagate from the expanded node and work back to the root node
-            #print "Backpropagating"
-            if rollout:
-                node.Update(state.GetResult(node.playerJustMoved)) # state is terminal. Update node with result from POV of node.playerJustMoved
-            else:
-                node.Update(q)
-            node = node.parentNode
-
-    # Output some information about the tree - can be omitted
-    if (verbose): print (rootnode.TreeToString(0))
-    else:
-        print(rootnode.ChildrenToString(state))
-    return sorted(rootnode.childNodes, key = lambda c: c.visits)[-1].move # return the move that was most visited
-
-def UCTPlayGame(firstplayer,itterations):
-    """ Play a sample game between two UCT players where each player gets a different number 
-        of UCT iterations (= simulations = tree nodes).
-    """
-
-
-    state = DotsAndBoxes() # uncomment to play Dots and Boxes
-    #state = OXOState()
-
-    while (state.GetMoves() != []):
-        print(str(state))
-        #print state.Qboard
-        if state.playerJustMoved == 1:
-            print "Thinking"
-            m = UCT(rootstate = state.Clone(), itermax = 5000, verbose = False) # play with values for itermax and verbose = True
-            #i = input("Player 1 Enter the location of your move")
-            #m = state.rosettaStoneIndex(i)
-        else:
-            m = UCT(rootstate = state.Clone(), itermax = 1, verbose = False)
-
-            """
-            i = input("Player 1 Enter the location of your move")
-            I = state.organizeMove(i[0],i[1])
-            while state.ultimateCheck2ThisTimeItsPersonal(I) == False:
-                print("\n \n" + str(state))
-                print "That move was invalid."
-                i = input("Player 1 Enter the location of your move \n")
-                I = state.organizeMove(i[0], i[1])
-            
-            m = state.rosettaStoneIndex(I)
-            """
-        #print("Best Move: " + str(state.rosettaStoneCoord(m)) + "\n")
-        state.DoMove(m)
-    print(str(state))
-    #print state.playerJustMoved
-    if state.GetResult(state.playerJustMoved) == 1.0:
-        print("Player " + str(state.playerJustMoved) + " wins!")
-        return state.playerJustMoved
-    elif state.GetResult(state.playerJustMoved) == 0.0:
-        print("Player " + str(3 - state.playerJustMoved) + " wins!")
-        return 3 - state.playerJustMoved
-    else: print("Nobody wins!")
-    return state.playerJustMoved
 
 class Object(pygame.sprite.Sprite):
     def __init__(self, width, height, x, y, type, image=None):
@@ -1028,23 +716,11 @@ def main():
         pygame.display.flip()
 
 
-
-
 if __name__ == "__main__":
-    """ Play a single game to the end using UCT for both players. 
-    """
-    #UCTPlayGame(2,10000)
-
+    # Forces static position of screen
     os.environ['SDL_VIDEO_CENTERED'] = '1'
 
     # Runs imported module
     pygame.init()
-    main()
 
-    """
-    scores = [0,0]
-    for i in range(0,20):
-        scores[UCTPlayGame(1,5000)-1] += 1
-        print scores
-    print "Player 1, 5000 itterations vs 1, 20 games" , scores
-    """
+    main()
