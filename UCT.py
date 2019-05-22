@@ -27,7 +27,7 @@ import os
 #Game Constants
 
 # window dimensions
-WIN_W = 800
+WIN_W = 400
 WIN_H = 400
 
 # buffer
@@ -44,11 +44,9 @@ SCREEN_W = WIN_W + 2 * BUFFER
 SCREEN_H = WIN_H + HUD_H + 2 * BUFFER + BORDER_H + 50
 
 # dot dimensions
-DD = WIN_W / 20
-
+DD = WIN_W / 10
 # line dimensions
 LD = WIN_H / 10
-
 # other variables
 FPS = 60
 TIMER = 0
@@ -66,7 +64,7 @@ ORANGE = (255, 122, 90)  # wozzy fill
 
 
 #Open the Q-Table
-with open('deesandbees (1).csv') as csvfile:
+with open('3mill.csv') as csvfile:
     RawQTable = csv.reader(csvfile, delimiter=',')
     fullstate = ""
     switch = False
@@ -75,7 +73,7 @@ with open('deesandbees (1).csv') as csvfile:
     for row in RawQTable:
         for char in row:
             fullstate += char
-            #print gamestate
+            # print gamestate
 
         qValue = fullstate[34:]
         gamestate = fullstate[2:32]
@@ -196,7 +194,7 @@ class DotsAndBoxes:
                             #num = num + 1
                             self.Stone.append(((x1, y1), (x2, y2)))
 
-        #print(self.Stone)
+        # print(self.Stone)
         return self.Stone
 
     def generateRosettaStoneQ(self):
@@ -210,13 +208,13 @@ class DotsAndBoxes:
     def rosettaStoneIndex(self, move):
 
         for pair in self.Stone:
-            #print pair[0]
-            #print pair[1]
-            #print move
-            #print pair
-            #print pair[0],pair[1], move
+            # print pair[0]
+            # print pair[1]
+            # print move
+            # print pair
+            # print pair[0],pair[1], move
             if pair == move:
-                #print "new move: ", self.Stone.index(pair)
+                # print "new move: ", self.Stone.index(pair)
                 return self.Stone.index(pair)
 
 
@@ -225,21 +223,21 @@ class DotsAndBoxes:
         num = 0
 
         for pair in self.Stone:
-            #print pair[0]
-            #print pair[1]
-            #print move
-            #print pair
-            #print pair[0],pair[1], move
+            # print pair[0]
+            # print pair[1]
+            # print move
+            # print pair
+            # print pair[0],pair[1], move
             if self.Stone.index(pair) == move:
                 return pair
 
     def rosettaStoneLine(self, move):
         for pair in self.QStone:
-            #print pair[0]
-            #print pair[1]
-            #print move
-            #print pair
-            #print pair[0],pair[1], move
+            # print pair[0]
+            # print pair[1]
+            # print move
+            # print pair
+            # print pair[0],pair[1], move
             if self.QStone.index(pair) == move:
                 return pair
 
@@ -250,16 +248,16 @@ class DotsAndBoxes:
         bottom-left corners of squares captured after a move."""
         move = self.rosettaStoneCoord(moveI)
         moveL = self.rosettaStoneLine(moveI)
-        #print("moving")
-        #print(moveI)
-        #print(move)
+        # print("moving")
+        # print(moveI)
+        # print(move)
 
         assert (self._isGoodCoord(move[0]) and
                 self._isGoodCoord(move[1])), \
             "Bad coordinates, out of bounds of the board."
         move = self.makeMove(move[0], move[1])
 
-        #print(move)
+        # print(move)
 
         self.board[move] = self.playerJustMoved
         ## Check if a square is completed.
@@ -269,8 +267,8 @@ class DotsAndBoxes:
                 self.squares[corner] = self.playerJustMoved
         else:
             self._switchPlayer()
-        #print(self.moves)
-        #print(moveI)
+        # print(self.moves)
+        # print(moveI)
         #self.moves.remove(moveI)
         self.removeMove(moveI)
         self.Qboard[moveL[0]][moveL[1]] = True
@@ -283,7 +281,7 @@ class DotsAndBoxes:
     def _switchPlayer(self):
         self.player = (self.player + 1) % 2
         self.playerJustMoved = 3 - self.playerJustMoved
-        #print self.playerJustMoved
+        # print self.playerJustMoved
 
     def getPlayer(self):
         return self.player
@@ -373,31 +371,31 @@ class DotsAndBoxes:
         # check if line is taken
         self.xdelta, self.ydelta = move[1][0] - move[0][0], move[1][1] - move[0][1]
 
-        #print(move)
+        # print(move)
         while (self._isGoodCoord(move[0]) == False or self._isGoodCoord(move[1]) == False):
-            #print("Fail:1")
+            # print("Fail:1")
             return False
 
         while (move[0][0] == move [0][1] == move [1][0] == move [1][1]):
-            #print("Fail:2")
+            # print("Fail:2")
             return False
 
         #while ((abs(self.xdelta) > 1 and abs(self.ydelta) == 0) or (abs(self.xdelta) == 0 and abs(self.ydelta) > 1)) or (abs(self.xdelta) > 1 and abs(self.ydelta) > 1):
         #    return False
 
         while move[0][0] > self.width and move[1][0] > self.width  and move[0][1] > self.height and move[1][1] > self.height:
-            #print("Fail:3")
+            # print("Fail:3")
             return False
 
         mmove = self.organizeMove(move[0],move[1])
 
         while ( self.board.has_key(mmove)):
-            #print("Fail:4")
+            # print("Fail:4")
             return False
 
         if (((abs(self.xdelta) == 0) and (abs(self.ydelta) == 1)) or ((abs(self.xdelta) == 1) and (abs(self.ydelta) == 0))):
             return True
-        #print("Fail:5")
+        # print("Fail:5")
         return False
     def makeMove(self, coord1, coord2):
         """Return a new "move", and ensure it's in canonical form.
@@ -459,27 +457,27 @@ class DotsAndBoxes:
         return self.moves
 
     def GetMoves(self):
-        #print("Getting Moves")
+        # print("Getting Moves")
 
         """for h1 in range(self.height):
             for w1 in range(self.width):
                 for h2 in range(self.height):
                     for w2 in range(self.width):
-                        #print(((w1, h2), (w2, h2)))
+                        # print(((w1, h2), (w2, h2)))
                         if (self.ultimateCheck2ThisTimeItsPersonal(((w1, h2), (w2, h2))) == True):
                             moves.append(self.rosettaStoneIndex(((w1, h1), (w2, h2))))"""
-        #print("Finished getting Moves")
+        # print("Finished getting Moves")
 
         return self.moves[:]
 
     #give it playerjustmoved. If playerjustmoved wins then return 1.0
     def GetResult(self,playerjm):
         if self.GetMoves() == []:
-            #print("Out of moves")
-            #print playerjm
-            #print self.player
-            #print "Score: " ,self.scores, "playerjm: ", playerjm
-            #print self
+            # print("Out of moves")
+            # print playerjm
+            # print self.player
+            # print "Score: " ,self.scores, "playerjm: ", playerjm
+            # print self
             if self.scores[playerjm-1] > self.scores[3-playerjm-1]:
                 return 1.0
             else:
@@ -496,17 +494,17 @@ class DotsAndBoxes:
 
         state_string = ""
         for i in state.Qboard:
-            #print i
+            # print i
             for a in i:
-                #print i[a]
+                # print i[a]
                 if (a == True):
                     state_string += "T"
                 if (a == False):
                     state_string += "F"
 
         state_string += str(moveL)
-        #print state
-        #print state.Qboard
+        # print state
+        # print state.Qboard
         try:
             return qTable[state_string]
         except:
@@ -542,8 +540,8 @@ class Node:
             Return the added child node
         """
         n = Node(move = m, parent = self, state = s)
-        #print(self.untriedMoves)
-        #print(m)
+        # print(self.untriedMoves)
+        # print(m)
         self.childNodes.append(n)
 
         return n
@@ -593,7 +591,7 @@ def UCT(rootstate, itermax, verbose = False):
         state = rootstate.Clone()
         selected = False
 
-        #print"Select"
+        # print"Select"
         #Select
 
         while node.untriedMoves == [] and node.childNodes != []: # node is fully expanded and non-terminal
@@ -605,7 +603,7 @@ def UCT(rootstate, itermax, verbose = False):
         # Expand
         rollout = False
         if node.untriedMoves != []: # if we can expand (i.e. state/node is non-terminal)
-            #print "Expanding"
+            # print "Expanding"
             m = random.choice(node.untriedMoves)
             #try:
             q = state.getQValue(state, m)
@@ -614,7 +612,7 @@ def UCT(rootstate, itermax, verbose = False):
                 rollout = True
             """
             except:
-                #print state
+                # print state
                 print selected
                 print "Untried Moves", node.untriedMoves
                 print "State.getMoves", state.GetMoves()
@@ -627,29 +625,31 @@ def UCT(rootstate, itermax, verbose = False):
             node = node.AddChild(m,state) # add child and descend tree
 
         # Rollout - this can often be made orders of magnitude quicker using a state.GetRandomMove() function
-        #print"autobots"
-        #print state.GetMoves()
+        # print"autobots"
+        # print state.GetMoves()
 
         if rollout:
             while state.GetMoves() != []: # while state is non-terminal
-                #print "Rolling Out"
-                #print state.GetMoves()
+                # print "Rolling Out"
+                # print state.GetMoves()
                 r = random.choice(state.GetMoves())
                 state.DoMove(r)
-
-        #print "Backpropagate"
+        if state.playerJustMoved != rootstate.playerJustMoved:
+            q = 0 - float(q)
+        # print "Backpropagate"
         while node != None: # backpropagate from the expanded node and work back to the root node
-            #print "Backpropagating"
+            # print "Backpropagating"
             if rollout:
                 node.Update(state.GetResult(node.playerJustMoved)) # state is terminal. Update node with result from POV of node.playerJustMoved
             else:
                 node.Update(q)
+
             node = node.parentNode
 
     # Output some information about the tree - can be omitted
     if (verbose): print (rootnode.TreeToString(0))
     else:
-        print(rootnode.ChildrenToString(state))
+        """print(rootnode.ChildrenToString(state))"""
     return sorted(rootnode.childNodes, key = lambda c: c.visits)[-1].move # return the move that was most visited
 
 def UCTPlayGame(firstplayer,itterations):
@@ -662,10 +662,10 @@ def UCTPlayGame(firstplayer,itterations):
     #state = OXOState()
 
     while (state.GetMoves() != []):
-        print(str(state))
-        #print state.Qboard
-        if state.playerJustMoved == 1:
-            print "Thinking"
+        #print(str(state))
+        # print state.Qboard
+        if state.playerJustMoved == 2:
+            #print "Thinking"
             m = UCT(rootstate = state.Clone(), itermax = 5000, verbose = False) # play with values for itermax and verbose = True
             #i = input("Player 1 Enter the location of your move")
             #m = state.rosettaStoneIndex(i)
@@ -683,10 +683,10 @@ def UCTPlayGame(firstplayer,itterations):
             
             m = state.rosettaStoneIndex(I)
             """
-        #print("Best Move: " + str(state.rosettaStoneCoord(m)) + "\n")
+        # print("Best Move: " + str(state.rosettaStoneCoord(m)) + "\n")
         state.DoMove(m)
-    print(str(state))
-    #print state.playerJustMoved
+    #print(str(state))
+    # print state.playerJustMoved
     if state.GetResult(state.playerJustMoved) == 1.0:
         print("Player " + str(state.playerJustMoved) + " wins!")
         return state.playerJustMoved
@@ -730,13 +730,38 @@ class Object(pygame.sprite.Sprite):
         else:
             return pygame.Rect(self.rect.x, self.rect.y, self.w, self.h)
 
-    def update(self, mousedown, run, dts, player_score, wozzy_score, z_group):
+    def update(self, mousedown, run, dts, player_score, wozzy_score, z_group, compBoxes, m):
+
         if self.clicked is False:
+
+            if compBoxes != None:
+                self.image.fill(DB)
+                self.image.set_alpha(255)
+                self.clicked = True
+                self.tuple = run.get_tuple(self)
+                box_made = compBoxes
+
+                # update scores
+                if len(box_made) > 0:
+                    for box in box_made:
+
+                        # print("UpdateComputer")
+                        run.wozzy_score = dts.scores[1]
+                        wozzy_score.image = wozzy_score.font.render(str(run.wozzy_score), 1, WHITE)
+                        for z in z_group:
+                            print "box left: " + str(z.rect.left) + " | box bottom: " + str(z.rect.bottom)
+                            print "box made: " + str(box[0]) + " | box made bottom : " + str(box[1])
+                            if z.rect.left == (220 - (80 * (2 - box[0]))) and z.rect.bottom == (
+                                    480 - (80 * (box[1]))):
+                                print "zcapasda" + str(z.rect.x) + str(z.rect.y)
+                                z.image.fill(ORANGE)
+                                z.image.set_alpha(255)
+
             if self.hitbox.collidepoint(pygame.mouse.get_pos()):
+                # change object color when mouse is clicked over it
                 self.image.fill(LC)
                 self.image.set_alpha(150)
 
-                # change object color when mouse is clicked over it
                 if mousedown:
                     self.image.fill(DB)
                     self.image.set_alpha(255)
@@ -747,32 +772,20 @@ class Object(pygame.sprite.Sprite):
                     # update scores
                     if len(box_made) > 0:
                         for box in box_made:
-                            if dts.playerJustMoved == 2:
-                                #print("UpdateComputer")
-                                run.wozzy_score = dts.scores[1]
-                                wozzy_score.image = wozzy_score.font.render(str(run.wozzy_score), 1, WHITE)
-                                for z in z_group:
-                                    print "box left: " + str(z.rect.left) + " | box bottom: " + str(z.rect.bottom)
-                                    print "box made: " + str(box[0]) + " | box made bottom : " + str(box[1])
-                                    if z.rect.left == (220-(80*(2-box[0]))) and z.rect.bottom == (480-(80* (box[1]))):
-                                        print "zcapasda" + str(z.rect.x) + str(z.rect.y)
-                                        z.image.fill(ORANGE)
-                                        z.image.set_alpha(255)
 
-                            else:
-                                #print("UpdateHuman")
-                                run.player_score = dts.scores[0]
-                                player_score.image = player_score.font.render(str(run.player_score), 1, WHITE)
-                                for z in z_group:
-                                    if z.rect.left == (220-(80*(2-box[0]))) and z.rect.bottom == (480-(80* (box[1]))):
-                                        print "adpoasjpajp"  + str(z.rect.x) + str(z.rect.y)
-                                        z.image.fill(TEAL)
-                                        z.image.set_alpha(255)
-                            #print dts.scores[0], dts.scores[1]
+                            # print("UpdateHuman")
+                            run.player_score = dts.scores[0]
+                            player_score.image = player_score.font.render(str(run.player_score), 1, WHITE)
+                            for z in z_group:
+                                if z.rect.left == (220-(80*(2-box[0]))) and z.rect.bottom == (480-(80* (box[1]))):
+                                    print "adpoasjpajp"  + str(z.rect.x) + str(z.rect.y)
+                                    z.image.fill(TEAL)
+                                    z.image.set_alpha(255)
+                        # print dts.scores[0], dts.scores[1]
 
                 # make object transparent again if mouse isn't hovering over it / object wasn't clicked
-            if self.hitbox.collidepoint(pygame.mouse.get_pos()) == 0:
-                self.image.set_alpha(0)
+                if self.hitbox.collidepoint(pygame.mouse.get_pos()) == 0:
+                    self.image.set_alpha(0)
 
 
 class Game:
@@ -987,19 +1000,51 @@ def main():
             y += LD
         x = BUFFER
 
-    while run.play:
+    while dts.GetMoves() != []:
+        m = None
         mousedown = False
-        for event in pygame.event.get():
-            # checks if window exit button is pressed
-            if event.type == pygame.QUIT:
-                sys.exit()
-            # checks if mouse is clicked
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mousedown = True
+        boxes = None
+        if dts.playerJustMoved == 2:
+            print "Thinking"
+            m = UCT(rootstate=dts.Clone(), itermax=5000,verbose=False)  # play with values for itermax and verbose = True
+            # i = input("Player 1 Enter the location of your move")
+            # m = state.rosettaStoneIndex(i)
+
+        else:
+            #m = UCT(rootstate=state.Clone(), itermax=1, verbose=False)
+
+            """
+            i = input("Player 1 Enter the location of your move")
+            I = state.organizeMove(i[0],i[1])
+            while state.ultimateCheck2ThisTimeItsPersonal(I) == False:
+                print("\n \n" + str(state))
+                print "That move was invalid."
+                i = input("Player 1 Enter the location of your move \n")
+                I = state.organizeMove(i[0], i[1])
+
+            m = state.rosettaStoneIndex(I)
+            """
+
+            for event in pygame.event.get():
+                # checks if window exit button is pressed
+                if event.type == pygame.QUIT:
+                    sys.exit()
+                # checks if mouse is clicked
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    mousedown = True
 
         # update line
-        line_group.update(mousedown, run, dts, player_score, wozzy_score, z_group)
-        b_group.update(mousedown, run, dts, player_score, wozzy_score, z_group)
+        print dts.playerJustMoved
+
+        if dts.playerJustMoved == 2:
+            boxes = dts.DoMove(m)
+            mousedown = False
+            line_group.update(mousedown, run, dts, player_score, wozzy_score, z_group, boxes, m)
+            b_group.update(mousedown, run, dts, player_score, wozzy_score, z_group, boxes, m)
+        else:
+            line_group.update(mousedown, run, dts, player_score, wozzy_score, z_group, None, None)
+            b_group.update(mousedown, run, dts, player_score, wozzy_score, z_group, None, None)
+
 
         # update text positions
         name_group.update(player_name, wozzy_name, player_score, wozzy_score)
@@ -1037,16 +1082,15 @@ if __name__ == "__main__":
     """
     #UCTPlayGame(2,10000)
 
-    os.environ['SDL_VIDEO_CENTERED'] = '1'
+    #os.environ['SDL_VIDEO_CENTERED'] = '1'
 
     # Runs imported module
-    pygame.init()
-    main()
+    #pygame.init()
+    #main()
 
-    """
+
     scores = [0,0]
     for i in range(0,20):
         scores[UCTPlayGame(1,5000)-1] += 1
         print scores
     print "Player 1, 5000 itterations vs 1, 20 games" , scores
-    """
